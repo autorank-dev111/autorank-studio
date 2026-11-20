@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoRank Studio v8.1 | E-Commerce AI & SEO Conveyor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    :root {
+      --bg-deep: #050811;
+      --glass-crystal: rgba(14, 21, 38, 0.22);
+      --glass-card: rgba(18, 27, 48, 0.30);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-highlight: rgba(255, 255, 255, 0.32);
+      --neon-purple: #a855f7;
+      --neon-pink: #ec4899;
+      --neon-green: #10b981;
+      --neon-cyan: #06b6d4;
+      --neon-amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    body {
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 14% 20%, rgba(168, 85, 247, 0.25) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.22) 0%, transparent 42%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 0%, transparent 45%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 12px 18px;
+    }
+
+    /* Дрібний та густий маркетинговий візерунок у стилі WhatsApp (90x90px) */
+    .whatsapp-pattern {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.11;
+      background-size: 95px 95px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' fill='none' stroke='%23e2e8f0' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14a3 3 0 0 1 5 2c0 2-4 3-4 5m-11 7l12-7 12 7H8z'/%3E%3Cpath d='M58 10h9l8 8-9 9-8-8V10z'/%3E%3Ccircle cx='62' cy='14' r='1'/%3E%3Ccircle cx='98' cy='28' r='1.5'/%3E%3Ccircle cx='107' cy='28' r='1.5'/%3E%3Cpath d='M90 12h4l3 11h12l2-8H96'/%3E%3Cpath d='M14 52l10-5 10 5v12l-10 5-10-5V52z'/%3E%3Cpath d='M14 52l10 5 10-5M24 57v12'/%3E%3Cpath d='M52 66V55m6 11V50m6 16V44m-15 22h18'/%3E%3Cpath d='M90 48v16m3-16v16m4-16v16m2-16v16m5-16v16'/%3E%3Cpath d='M16 90l5-3h9l5 3 3 6-4 2-2-4v13H19V94l-2 4-4-2 3-6z'/%3E%3Cpolygon points='60,86 62,91 68,92 64,96 65,102 60,99 55,102 56,96 52,92 58,91'/%3E%3Ccircle cx='98' cy='94' r='6'/%3E%3Cpath d='M103 99l5 5'/%3E%3Cpolygon points='42,29 38,36 42,36 40,42 46,34 42,34'/%3E%3C/svg%3E");
+    }
+
+    /* Прозоре кришталеве скло (без навантаження на процесор) */
+    .crystal-glass {
+      background: var(--glass-crystal);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-highlight);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+    }
+
+    .app-wrapper { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; }
+
+    /* Компактна шапка в ОДИН рядок */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; margin-bottom: 14px; gap: 10px; flex-wrap: nowrap;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .logo-box {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 16px; color: #fff;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.55);
+    }
+    .brand-title h1 { font-size: 17px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
+    .pro-badge { font-size: 9.5px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); padding: 2px 6px; border-radius: 5px; }
+    .brand-title p { font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Тарифи LITE / PRO / VIP */
+    .tier-switcher {
+      display: flex; gap: 4px; background: rgba(8, 12, 24, 0.65);
+      padding: 4px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .tier-btn {
+      background: transparent; border: 1px solid transparent; color: var(--text-muted);
+      padding: 6px 11px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap;
+    }
+    .tier-btn.active-lite { background: rgba(6, 182, 212, 0.22); color: #22d3ee; border-color: rgba(6, 182, 212, 0.55); }
+    .tier-btn.active-pro { background: rgba(168, 85, 247, 0.25); color: #e879f9; border-color: rgba(168, 85, 247, 0.55); }
+    .tier-btn.active-vip { background: linear-gradient(90deg, rgba(245, 158, 11, 0.28), rgba(236, 72, 153, 0.28)); color: #fde047; border-color: rgba(245, 158, 11, 0.65); }
+
+    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .btn-hub-header {
+      background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+      color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 7px 12px;
+      border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); white-space: nowrap;
+    }
+    .ui-lang-switch { display: flex; background: rgba(8, 12, 24, 0.65); border-radius: 8px; padding: 2px; border: 1px solid rgba(255, 255, 255, 0.14); }
+    .ui-lang-btn { background: transparent; border: none; color: #94a3b8; font-size: 10.5px; font-weight: 800; padding: 4px 7px; border-radius: 6px; cursor: pointer; }
+    .ui-lang-btn.active { background: rgba(255, 255, 255, 0.18); color: #fff; }
+
+    .credit-pill { background: rgba(12, 18, 34, 0.65); border: 1px solid rgba(255, 255, 255, 0.18); padding: 6px 10px; border-radius: 9px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+    .credit-pill .usdt-val { color: #34d399; font-weight: 800; }
+    .credit-pill .uah-val { color: var(--neon-amber); font-size: 10.5px; }
+    .btn-topup { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 7px 11px; border-radius: 9px; font-weight: 700; font-size: 11.5px; cursor: pointer; }
+
+    /* РОБОЧА СІТКА: Широке ліве вікно (44%) та Праве вікно (56%) */
+    .workspace { display: grid; grid-template-columns: 44% 56%; gap: 18px; align-items: start; }
+    .panel { padding: 18px 20px; }
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.6px; color: #f1f5f9;
+      text-transform: uppercase; padding-bottom: 10px; margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .lite-banner {
+      display: none; background: rgba(6, 182, 212, 0.14); border: 1px solid rgba(6, 182, 212, 0.45);
+      color: #a5f3fc; padding: 10px 12px; border-radius: 10px; font-size: 11.5px; line-height: 1.45; margin-bottom: 10px;
+    }
+
+    label.field-label { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; margin-top: 8px; font-weight: 600; }
+    select.glass-select, input.glass-input, textarea.glass-input {
+      width: 100%; padding: 8px 11px; border-radius: 9px;
+      background: rgba(8, 13, 26, 0.65); color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.18); font-size: 12px; font-weight: 600; outline: none;
+    }
+    .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .lang-bar {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;
+      background: rgba(8, 13, 26, 0.5); padding: 7px; border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .lang-chip {
+      padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 700;
+      background: rgba(255, 255, 255, 0.06); color: #cbd5e1; cursor: pointer; border: 1px solid transparent; user-select: none;
+    }
+    .lang-chip.active { background: rgba(168, 85, 247, 0.28); color: #fff; border-color: var(--neon-purple); }
+
+    .size-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+    .size-chip {
+      padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 700;
+      background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.16); color: #cbd5e1; cursor: pointer;
+    }
+    .size-chip.active { background: rgba(16, 185, 129, 0.28); color: #34d399; border-color: var(--neon-green); }
+
+    .autosync-box {
+      margin-top: 10px; padding: 9px 12px; border-radius: 10px;
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.14), rgba(6, 182, 212, 0.14));
+      border: 1px solid rgba(16, 185, 129, 0.42);
+    }
+    .autosync-label { display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 11.5px; font-weight: 700; color: #ecfdf5; }
+    .autosync-price-tag { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 800; }
+    .autosync-settings { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); }
+
+    .drop-zone {
+      margin-top: 10px; border: 1.5px dashed rgba(168, 85, 247, 0.65);
+      background: rgba(168, 85, 247, 0.08); border-radius: 12px; padding: 13px 10px; text-align: center;
+    }
+    .btn-select {
+      width: 100%; padding: 10px; border-radius: 9px; border: none;
+      background: linear-gradient(90deg, #9333ea, #db2777); color: #fff; font-weight: 700; font-size: 12.5px;
+      cursor: pointer; box-shadow: 0 0 16px rgba(168, 85, 247, 0.45); margin-bottom: 5px;
+    }
+    .drop-hint { font-size: 10.5px; color: var(--text-muted); line-height: 1.35; }
+
+    .queue-header { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; margin-top: 10px; margin-bottom: 5px; font-weight: 700; }
+    .queue-list { display: flex; flex-direction: column; gap: 6px; max-height: 185px; overflow-y: auto; }
+    .queue-item {
+      display: flex; flex-direction: column; gap: 4px;
+      background: rgba(10, 15, 30, 0.65); border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 9px; border-radius: 9px; font-size: 11px;
+    }
+    .queue-top-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .queue-item-left { display: flex; align-items: center; gap: 7px; overflow: hidden; }
+    .queue-thumb { width: 28px; height: 28px; border-radius: 5px; object-fit: cover; cursor: pointer; }
+    .queue-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; font-weight: 600; }
+    .parsed-price-tag { font-size: 9.5px; color: #34d399; background: rgba(16,185,129,0.2); padding: 1px 5px; border-radius: 4px; font-weight: 700; }
+    .queue-hint-input {
+      width: 100%; padding: 4px 7px; border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #f8fafc; font-size: 10.5px; outline: none;
+    }
+    .btn-remove { background: none; border: none; color: #f87171; cursor: pointer; font-size: 12.5px; font-weight: 800; }
+
+    .btn-clear {
+      width: 100%; margin-top: 7px; padding: 7px; border-radius: 8px;
+      background: rgba(239, 68, 68, 0.14); border: 1px solid rgba(239, 68, 68, 0.38);
+      color: #fca5a5; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .run-controls { display: flex; gap: 8px; margin-top: 8px; }
+    .btn-run {
+      flex: 1; padding: 12px; border-radius: 10px; border: none;
+      background: linear-gradient(90deg, #059669, #10b981); color: #fff; font-weight: 800; font-size: 12.5px;
+      cursor: pointer; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    }
+    .btn-stop {
+      display: none; padding: 12px 15px; border-radius: 10px;
+      background: linear-gradient(90deg, #dc2626, #ef4444); color: #fff; border: none; font-weight: 800; font-size: 12px; cursor: pointer;
+    }
+
+    /* Права колонка */
+    .right-header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .btn-top-tool {
+      background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9; padding: 5px 10px; border-radius: 7px; font-size: 10.5px; font-weight: 700; cursor: pointer;
+    }
+    .btn-top-tool.hub-accent {
+      background: rgba(168, 85, 247, 0.25); border-color: #a855f7; color: #f3e8ff;
+    }
+
+    .progress-box {
+      display: none; background: rgba(12, 18, 34, 0.65); border: 1px solid rgba(6, 182, 212, 0.45);
+      border-radius: 11px; padding: 10px 14px; margin-bottom: 12px;
+    }
+    .progress-top { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; margin-bottom: 5px; }
+    .progress-track { width: 100%; height: 7px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink)); transition: width 0.3s ease; }
+
+    .export-banner {
+      display: none; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+    }
+    .export-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+    .export-title { color: #34d399; font-weight: 800; font-size: 13px; }
+    .safe-badge { background: rgba(16, 185, 129, 0.22); border: 1px solid #10b981; color: #6ee7b7; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 5px; }
+    .export-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    .btn-control-hub {
+      background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899); border: 1px solid rgba(255,255,255,0.35);
+      color: #fff; padding: 8px 13px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;
+    }
+    .btn-unlock { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.6); color: #fde047; padding: 7px 11px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
+    .btn-csv { background: rgba(139, 92, 246, 0.28); border: 1px solid #a855f7; color: #fff; padding: 7px 11px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
+    .btn-xml { background: rgba(234, 88, 12, 0.28); border: 1px solid #f59e0b; color: #fff; padding: 7px 11px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
+    .btn-zip { background: linear-gradient(90deg, #0284c7, #06b6d4); border: none; color: #fff; padding: 7px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
+    .btn-direct-sync { display: none; background: linear-gradient(90deg, #059669, #10b981); border: 1px solid #6ee7b7; color: #fff; padding: 7px 12px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; }
+
+    .cards-container { display: flex; flex-direction: column; gap: 12px; }
+    .product-card {
+      display: grid; grid-template-columns: 170px 1fr; gap: 14px;
+      background: var(--glass-card); border: 1px solid rgba(255, 255, 255, 0.16);
+      border-top: 1px solid rgba(255, 255, 255, 0.28); border-radius: 14px; padding: 13px;
+    }
+    .card-img-wrap {
+      width: 170px; height: 170px; border-radius: 10px; background: #fff; position: relative;
+      overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .card-img-wrap img { width: 84%; height: 84%; object-fit: contain; }
+    .locked-blur img { filter: blur(10px) brightness(0.75); }
+    .watermark-overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: rgba(0, 0, 0, 0.38); color: #fcd34d; font-weight: 800; font-size: 10.5px; text-align: center; pointer-events: none;
+    }
+    .infographic-badge {
+      position: absolute; top: 6px; left: 6px; background: linear-gradient(90deg, #dc2626, #ea580c); color: #fff;
+      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+    }
+    .brand-wm-badge {
+      position: absolute; bottom: 5px; right: 6px; background: rgba(15, 23, 42, 0.72); color: #f8fafc;
+      font-size: 8.5px; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+    }
+
+    .card-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 4px; }
+    .card-meta { font-size: 10px; font-weight: 800; color: #38bdf8; text-transform: uppercase; }
+    .brand-pill { background: rgba(168, 85, 247, 0.25); border: 1px solid #a855f7; color: #f3e8ff; padding: 1px 6px; border-radius: 4px; font-size: 9.5px; font-weight: 800; margin-left: 5px; }
+    .card-top-right { display: flex; align-items: center; gap: 7px; }
+    .old-price { color: #94a3b8; font-size: 11px; text-decoration: line-through; }
+    .card-price { color: #34d399; font-size: 13px; font-weight: 800; }
+    .btn-delete-card { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; width: 22px; height: 22px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 800; }
+
+    .field-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
+    .btn-copy-mini { background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.14); color: #cbd5e1; border-radius: 5px; padding: 2px 5px; font-size: 9.5px; cursor: pointer; }
+    .card-title { font-size: 14.5px; font-weight: 800; color: #fff; flex: 1; }
+    .card-title-sub { font-size: 10.5px; color: #94a3b8; font-style: italic; flex: 1; }
+    .card-desc { font-size: 11.8px; color: #cbd5e1; line-height: 1.44; margin: 3px 0; flex: 1; }
+    .card-specs, .card-keys { font-size: 11px; color: #94a3b8; line-height: 1.38; flex: 1; }
+    .card-specs strong, .card-keys strong { color: #e2e8f0; }
+
+    .card-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+    .btn-card { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.16); color: #e2e8f0; padding: 5px 9px; border-radius: 6px; font-size: 10.5px; font-weight: 600; cursor: pointer; }
+
+    .empty-state { text-align: center; padding: 45px 18px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+
+    /* МОДАЛЬНЕ ВІКНО: STUDIO CONTROL HUB */
+    .modal {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(5, 8, 18, 0.88); backdrop-filter: blur(12px);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .hub-window { width: 100%; max-width: 1320px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 18px; }
+    .hub-body { display: grid; grid-template-columns: 280px 1fr; gap: 16px; flex: 1; overflow: hidden; margin-top: 8px; }
+    .hub-sidebar { background: rgba(8, 12, 24, 0.6); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; }
+    .hub-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 9px; background: rgba(255,255,255,0.04); border: 1px solid transparent; cursor: pointer; }
+    .hub-item.active { background: rgba(168, 85, 247, 0.25); border-color: var(--neon-purple); }
+    .hub-item img { width: 38px; height: 38px; border-radius: 6px; background: #fff; object-fit: contain; }
+    .hub-item-info { overflow: hidden; flex: 1; }
+    .hub-item-sku { font-size: 10px; font-weight: 800; color: #38bdf8; }
+    .hub-item-title { font-size: 11px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hub-item-price { font-size: 10.5px; color: #34d399; font-weight: 700; }
+
+    .hub-editor { background: rgba(8, 12, 24, 0.55); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 16px; overflow-y: auto; display: grid; grid-template-columns: 240px 1fr; gap: 18px; }
+    .hub-photo-col { display: flex; flex-direction: column; gap: 8px; }
+    .hub-preview-box { width: 240px; height: 240px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid rgba(168, 85, 247, 0.45); }
+    .hub-preview-box img { width: 86%; height: 86%; object-fit: contain; }
+
+    .ai-rework-box { background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(168, 85, 247, 0.45); border-radius: 10px; padding: 10px; }
+    .ai-rework-title { font-size: 11px; font-weight: 800; color: #e879f9; text-transform: uppercase; margin-bottom: 5px; }
+    .rework-btns { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+    .btn-rework-seo { flex: 1; background: linear-gradient(90deg, #7c3aed, #a855f7); border: none; color: #fff; padding: 8px 10px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .btn-rework-full { flex: 1; background: rgba(6, 182, 212, 0.25); border: 1px solid #06b6d4; color: #a5f3fc; padding: 8px 10px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; }
+
+    .hub-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.12); }
+
+    .toast {
+      position: fixed; bottom: 20px; right: 20px; z-index: 2000;
+      background: rgba(12, 18, 34, 0.95); border: 1px solid var(--neon-green);
+      color: #fff; padding: 9px 15px; border-radius: 9px; font-size: 11.5px; font-weight: 700; display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="whatsapp-pattern"></div>
+
+  <div class="app-wrapper">
+    <!-- Компактна шапка в 1 рядок з прямою кнопкою Studio Control Hub -->
+    <header class="crystal-glass">
+      <div class="brand">
+        <div class="logo-box">AR</div>
+        <div class="brand-title">
+          <h1>AutoRank Studio <span class="pro-badge">v8.1 PRO</span></h1>
+          <p>E-COMMERCE AI & SEO CONVEYOR</p>
+        </div>
+      </div>
+
+      <div class="tier-switcher">
+        <button class="tier-btn" id="tierLiteBtn" onclick="setTier('LITE')">⚡ LITE ($0.25 / 10 грн)</button>
+        <button class="tier-btn active-pro" id="tierProBtn" onclick="setTier('PRO')">🚀 PRO ($0.60 / 25 грн)</button>
+        <button class="tier-btn" id="tierVipBtn" onclick="setTier('VIP')">👑 VIP STUDIO ($1.20 / 50 грн)</button>
+      </div>
+
+      <div class="header-right">
+        <button class="btn-hub-header" onclick="openControlHub(0)">🎛️ Studio Control Hub</button>
+
+        <div class="ui-lang-switch">
+          <button class="ui-lang-btn active" id="uiLangUA" onclick="setUiLang('UA')">UA</button>
+          <button class="ui-lang-btn" id="uiLangEN" onclick="setUiLang('EN')">EN</button>
+          <button class="ui-lang-btn" id="uiLangRU" onclick="setUiLang('RU')">RU</button>
+        </div>
+
+        <div class="credit-pill">
+          <span class="usdt-val" id="usdtBalance">$22.60</span>
+          <span class="uah-val">(<span id="creditBalance">950</span> грн)</span>
+        </div>
+        <button class="btn-topup" onclick="topUpCredits()">+ USDT</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <!-- ШИРОКЕ ЛІВЕ ВІКНО (44% екрана) -->
+      <section class="panel crystal-glass">
+        <div class="panel-header">
+          <span id="uiLeftHeader">📂 ВХІДНІ ФОТО ТА ПАРАМЕТРИ ПАРТІЇ</span>
+          <span id="tierStatusLabel" style="font-size:10.5px; color:#e879f9;">🚀 PRO ($0.60 / 25 грн)</span>
+        </div>
+
+        <div class="lite-banner" id="liteBanner">
+          ⚡ <b>Режим LITE (Повний автомат):</b> Усі зайві налаштування сховані. Просто закиньте фото нижче — AI сам визначить категорію, виріже білий фон із тінню та створить картку (UA + EN).
+        </div>
+
+        <div id="proSettingsBlock">
+          <div class="mini-grid">
+            <div>
+              <label class="field-label">Сфера бізнесу (AI Контекст)</label>
+              <select id="categorySelect" class="glass-select">
+                <option value="Одяг та Взуття (Fashion)">👗 Одяг та Взуття (Манекен + Бренд)</option>
+                <option value="Продукти харчування / FMCG">🍎 Продукти харчування / FMCG</option>
+                <option value="Побутова хімія та Косметика">🧼 Побутова хімія та Косметика</option>
+                <option value="Електроніка та Гаджети">🔌 Електроніка та Дім</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label">Обробка Photoroom + Манекен</label>
+              <select id="bgStyleSelect" class="glass-select">
+                <option value="white_shadow">✨ Білий фон + Тінь + Манекен</option>
+                <option value="mannequin_rotate">🔄 PRO: 3D-манекен (Розворот)</option>
+                <option value="transparent">🔲 Прозорий PNG (85% кадру)</option>
+                <option value="seo_only">⚡ Без обробки фото (Тільки SEO)</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="field-label">Мови генерації карток (Оберіть потрібні ринки)</label>
+          <div class="lang-bar">
+            <div class="lang-chip active" data-lang="UA" onclick="toggleLang(this)">🇺🇦 UA</div>
+            <div class="lang-chip active" data-lang="EN" onclick="toggleLang(this)">🇬🇧 EN</div>
+            <div class="lang-chip" data-lang="RU" onclick="toggleLang(this)">🌐 RU</div>
+            <div class="lang-chip" data-lang="PL" onclick="toggleLang(this)">🇵🇱 PL (Allegro)</div>
+            <div class="lang-chip" data-lang="DE" onclick="toggleLang(this)">🇩🇪 DE (Amazon)</div>
+            <div class="lang-chip" data-lang="RO" onclick="toggleLang(this)">🇷🇴 RO (eMAG)</div>
+          </div>
+
+          <div class="mini-grid">
+            <div>
+              <label class="field-label">Префікс артикулу (SKU)</label>
+              <input type="text" id="skuPrefixInput" class="glass-input" value="SKU-">
+            </div>
+            <div>
+              <label class="field-label">Базова ціна партії</label>
+              <input type="text" id="defaultPriceInput" class="glass-input" value="1299 грн">
+            </div>
+          </div>
+        </div>
+
+        <div id="vipSettingsBlock" style="display:none; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(245,158,11,0.35);">
+          <div style="font-size:10.5px; font-weight:800; color:#fde047;">👑 VIP STUDIO НАЛАШТУВАННЯ:</div>
+          <div class="mini-grid">
+            <div>
+              <label class="field-label">Стара ціна (До знижки)</label>
+              <input type="text" id="oldPriceInput" class="glass-input" value="1690 грн">
+            </div>
+            <div>
+              <label class="field-label">Склейка ракурсів</label>
+              <select id="groupCountSelect" class="glass-select">
+                <option value="1">1 фото = 1 товар</option>
+                <option value="2">2 фото = 1 товар</option>
+                <option value="4">4 фото = 1 товар (4 боки + Бірка)</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="field-label">📏 Розмірний ряд у CSV (S–XXL)</label>
+          <div class="size-chips" id="sizeChips">
+            <span class="size-chip" onclick="this.classList.toggle('active')">S</span>
+            <span class="size-chip" onclick="this.classList.toggle('active')">M</span>
+            <span class="size-chip" onclick="this.classList.toggle('active')">L</span>
+            <span class="size-chip" onclick="this.classList.toggle('active')">XL</span>
+            <span class="size-chip" onclick="this.classList.toggle('active')">XXL</span>
+          </div>
+
+          <div class="mini-grid">
+            <div>
+              <label class="field-label">🛡️ Водяний знак</label>
+              <input type="text" id="watermarkTextInput" class="glass-input" placeholder="@MyShop_UA">
+            </div>
+            <div>
+              <label class="field-label">🔥 Бейдж інфографіки</label>
+              <input type="text" id="badgeTextInput" class="glass-input" placeholder="ОРИГІНАЛ / ТОП">
+            </div>
+          </div>
+
+          <label class="field-label">🏢 Фірмовий підпис магазину в опис</label>
+          <input type="text" id="brandFooterInput" class="glass-input" placeholder="Відправка Новою Поштою в день замовлення!">
+        </div>
+
+        <div class="autosync-box">
+          <label class="autosync-label">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="autoSyncCheck" onchange="toggleAutoSync()">
+              <span id="uiAutoSyncText">🔗 Авто-імпорт прямо на вітрину магазину</span>
+            </div>
+            <span class="autosync-price-tag" id="autoSyncPriceTag">+15 грн ($0.35)</span>
+          </label>
+          <div class="autosync-settings" id="autoSyncSettings">
+            <div class="mini-grid">
+              <input type="text" id="storeUrlInput" class="glass-input" placeholder="URL магазину (Prom / Rozetka)">
+              <input type="password" id="storeTokenInput" class="glass-input" placeholder="API Ключ доступу">
+            </div>
+          </div>
+        </div>
+
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+          <button class="btn-select" id="uiSelectPhotosBtn" onclick="document.getElementById('fileInput').click()">
+            + Додати фото в чергу (Поштучно або Пачкою)
+          </button>
+          <div class="drop-hint">Під фото в черзі можна вписати бренд/тканину (напр. <b>Hellstar, фліс</b>) або додати ціну в назву файлу (<b>hudi_1850uah.jpg</b>)</div>
+        </div>
+
+        <div class="queue-header">
+          <span id="queueCount">Черга завантаження (0 шт.)</span>
+          <span id="queueSize">0.00 MB</span>
+        </div>
+        <div class="queue-list" id="queueList"></div>
+
+        <button class="btn-clear" id="uiClearQueueBtn" onclick="clearQueue()">🗑️ Очистити чергу зліва</button>
+
+        <div class="run-controls">
+          <button class="btn-run" id="runBtn" onclick="runPipeline()">🚀 Запустити конвеєр</button>
+          <button class="btn-stop" id="stopBtn" onclick="stopPipeline()">⏹️ СТОП</button>
+        </div>
+      </section>
+
+      <!-- ПРАВЕ ВІКНО (56% екрана): Завжди на видноті! -->
+      <section class="panel crystal-glass">
+        <div class="panel-header">
+          <span id="uiRightHeader">✨ ГОТОВИЙ КАТАЛОГ ТОВАРІВ</span>
+          <div class="right-header-actions">
+            <span id="processedCounter" style="font-size:11px; color:#94a3b8;">Карток: 0 шт.</span>
+            <button class="btn-top-tool hub-accent" onclick="openControlHub(0)">🎛️ Studio Control Hub (Ревізія та Ціни)</button>
+            <button class="btn-top-tool" onclick="printWarehouseLabels()">🏷️ Етикетки</button>
+            <button class="btn-top-tool" onclick="clearOutputWindow()">🧹 Очистити</button>
+          </div>
+        </div>
+
+        <div class="progress-box" id="progressBox">
+          <div class="progress-top">
+            <span id="progressLabel">Підготовка конвеєра...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="export-banner" id="exportBanner">
+          <div class="export-header-row">
+            <div class="export-title" id="exportTitle">✅ Пакет сформовано — готово до імпорту або ревізії!</div>
+            <div class="safe-badge">🛡️ Rozetka & Prom Safe</div>
+          </div>
+          <div class="export-actions">
+            <button class="btn-control-hub" onclick="openControlHub(0)">🎛️ Доопрацювати в Studio Control Hub</button>
+            <button class="btn-unlock" id="unlockBtn" onclick="unlockAllPreviews()">🔓 Розблокувати фото</button>
+            <button class="btn-csv" onclick="downloadCSV()">📊 Таблиця (.CSV)</button>
+            <button class="btn-xml" onclick="downloadXML()">🗂️ XML / YML Фід</button>
+            <button class="btn-zip" onclick="downloadAllZIP()">📦 Скачати ВСЕ (.ZIP)</button>
+            <button class="btn-direct-sync" id="directSyncBtn" onclick="syncDirectToStore()">🚀 Вивантажити в магазин</button>
+          </div>
+        </div>
+
+        <div class="cards-container" id="cardsContainer">
+          <div class="empty-state">
+            Завантажте фото ліворуч та натисніть зелену кнопку запуску 🤪🚀<br>
+            <span style="font-size:11.5px; color:#94a3b8;">Бажаєте подивитися, як виглядає кабінет доопрацювання та повторної обробки прямо зараз?</span><br>
+            <button class="btn-control-hub" style="margin-top:12px;" onclick="loadDemoAndOpenHub()">🎛️ Відкрити Studio Control Hub (Подивитися демо-картку)</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ПОВНОЕКРАННА СТУДІЯ: 🎛️ STUDIO CONTROL HUB -->
+  <div class="modal" id="controlHubModal">
+    <div class="hub-window crystal-glass">
+      <div class="panel-header" style="margin-bottom:0;">
+        <span>🎛️ STUDIO CONTROL HUB — КАБІНЕТ РЕВІЗІЇ, ЦІН ТА ПОВТОРНОЇ AI-ОБРОБКИ</span>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span id="hubItemCounter" style="font-size:11.5px; color:#38bdf8;">Товар 1 з 1</span>
+          <button class="btn-delete-card" onclick="closeControlHub()">✕</button>
+        </div>
+      </div>
+
+      <div class="hub-body">
+        <div class="hub-sidebar" id="hubSidebarList"></div>
+
+        <div class="hub-editor">
+          <div class="hub-photo-col">
+            <div class="hub-preview-box">
+              <img id="hubImg" src="" alt="Preview">
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-card" style="flex:1;" onclick="hubNavigate(-1)">⬅️ Попередній</button>
+              <button class="btn-card" style="flex:1;" onclick="hubNavigate(1)">Наступний ➡️</button>
+            </div>
+
+            <div class="ai-rework-box">
+              <div class="ai-rework-title">🤖 Завдання для AI на доопрацювання (n8n):</div>
+              <textarea id="hubCorrectionNote" class="glass-input" rows="3" placeholder="Напишіть зауваження (напр.: Це фірмове худі бренду Hellstar, видно на бірці! Додай бренд у заголовок і характеристики)"></textarea>
+              <div class="rework-btns">
+                <button class="btn-rework-seo" id="btnReworkSeo" onclick="runHubRework('seo_only')">📝 Переписати тільки SEO (3 сек)</button>
+                <button class="btn-rework-full" id="btnReworkFull" onclick="runHubRework('full')">🖼️ Переробити Фото + SEO</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="mini-grid">
+              <div>
+                <label class="field-label">Артикул (SKU)</label>
+                <input type="text" id="hubSku" class="glass-input" oninput="saveHubField('sku', this.value)">
+              </div>
+              <div>
+                <label class="field-label">🏷️ Бренд / Виробник (Для Rozetka/Prom)</label>
+                <input type="text" id="hubBrand" class="glass-input" placeholder="Напр. Hellstar / Nike" oninput="saveHubField('brand', this.value)">
+              </div>
+            </div>
+
+            <div class="mini-grid">
+              <div>
+                <label class="field-label">💲 Ціна продажу</label>
+                <input type="text" id="hubPrice" class="glass-input" oninput="saveHubField('price', this.value)">
+              </div>
+              <div>
+                <label class="field-label">Стара ціна (До знижки)</label>
+                <input type="text" id="hubOldPrice" class="glass-input" oninput="saveHubField('oldPrice', this.value)">
+              </div>
+            </div>
+
+            <label class="field-label">🇺🇦 Заголовок картки (UA)</label>
+            <input type="text" id="hubTitleUa" class="glass-input" oninput="saveHubField('title_ua', this.value)">
+
+            <label class="field-label">🌍 Заголовок іншими мовами (EN / PL / DE / RU)</label>
+            <input type="text" id="hubTitleEn" class="glass-input" oninput="saveHubField('title_en', this.value)">
+
+            <label class="field-label">📄 SEO-Опис товару</label>
+            <textarea id="hubDesc" class="glass-input" rows="3" oninput="saveHubField('description', this.value)"></textarea>
+
+            <label class="field-label">📌 Характеристики (Через вертикальну риску |)</label>
+            <textarea id="hubSpecs" class="glass-input" rows="2" oninput="saveHubField('characteristics', this.value)"></textarea>
+
+            <label class="field-label">🔍 Пошукові запити (Ключові слова через кому)</label>
+            <textarea id="hubKeys" class="glass-input" rows="2" oninput="saveHubField('keywords', this.value)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="hub-footer">
+        <div style="font-size:11.5px; color:#94a3b8;">💡 Працюйте один за трьох: редагуйте вручну з клавіатури або відправляйте точкове завдання для AI ліворуч.</div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-csv" onclick="downloadCSV()">📊 Скачати таблицю (.CSV)</button>
+          <button class="btn-run" style="padding:9px 22px; width:auto;" onclick="closeControlHub()">✅ Затвердити всі та повернутися в каталог</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="imgModal" onclick="this.style.display='none'">
+    <img id="modalImg" src="" alt="Preview" style="max-width:90%; max-height:88vh; border-radius:14px; background:#fff;">
+  </div>
+
+  <div class="toast" id="toastBox">✅ Виконано!</div>
+
+  <script>
+    const WEBHOOK_URL = 'http://localhost:5678/webhook/5fad5afa-5b4b-4e14-bf70-c9034d973fb5';
+    const TIER_COSTS = { LITE: 10, PRO: 25, VIP: 50 };
+    const RATE_USD = 42;
+    let currentTier = 'PRO';
+    let fileQueue = [];
+    let processedItems = [];
+    let credits = parseInt(localStorage.getItem('autorank_balance_v8') || '950', 10);
+    let previewsUnlocked = false;
+    let abortController = null;
+    let isRunning = false;
+    let currentHubIndex = 0;
+
+    const STOP_WORDS = /\b(хіт продажів|топ продажів|найкраща ціна|суперціна|дешево|акція|розпродаж|100% оригінал|репліка|копія|аналог)\b/gi;
+
+    function updateBalanceDisplay() {
+      document.getElementById('creditBalance').innerText = credits;
+      document.getElementById('usdtBalance').innerText = `$${(credits / RATE_USD).toFixed(2)}`;
+    }
+    updateBalanceDisplay();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('autorank_saved_cards_v8');
+      if (saved) {
+        try {
+          processedItems = JSON.parse(saved);
+          if (processedItems.length > 0) renderCards();
+        } catch (e) {}
+      }
+      setTier('PRO');
+    });
+
+    function saveSession() {
+      try { localStorage.setItem('autorank_saved_cards_v8', JSON.stringify(processedItems)); } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastBox');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2400);
+    }
+
+    function setUiLang(lang) {
+      ['UA', 'EN', 'RU'].forEach(l => document.getElementById('uiLang' + l).classList.toggle('active', l === lang));
+      const map = {
+        UA: ['📂 ВХІДНІ ФОТО ТА ПАРАМЕТРИ ПАРТІЇ', '✨ ГОТОВИЙ КАТАЛОГ ТОВАРІВ', '🚀 Запустити конвеєр'],
+        EN: ['📂 RAW PHOTOS & BATCH SETTINGS', '✨ PROCESSED PRODUCT CATALOG', '🚀 Run AI Conveyor'],
+        RU: ['📂 ВХОДНЫЕ ФОТО И ПАРАМЕТРЫ ПАРТИИ', '✨ ГОТОВЫЙ КАТАЛОГ ТОВАРОВ', '🚀 Запустить конвейер']
+      };
+      document.getElementById('uiLeftHeader').innerText = map[lang][0];
+      document.getElementById('uiRightHeader').innerText = map[lang][1];
+      document.getElementById('runBtn').innerText = map[lang][2];
+    }
+
+    function setTier(tier) {
+      currentTier = tier;
+      document.getElementById('tierLiteBtn').className = 'tier-btn' + (tier === 'LITE' ? ' active-lite' : '');
+      document.getElementById('tierProBtn').className = 'tier-btn' + (tier === 'PRO' ? ' active-pro' : '');
+      document.getElementById('tierVipBtn').className = 'tier-btn' + (tier === 'VIP' ? ' active-vip' : '');
+
+      const label = document.getElementById('tierStatusLabel');
+      const liteBanner = document.getElementById('liteBanner');
+      const proBlock = document.getElementById('proSettingsBlock');
+      const vipBlock = document.getElementById('vipSettingsBlock');
+      const syncTag = document.getElementById('autoSyncPriceTag');
+
+      if (tier === 'LITE') {
+        label.innerText = '⚡ LITE ($0.25 / 10 грн)';
+        label.style.color = '#22d3ee';
+        liteBanner.style.display = 'block';
+        proBlock.style.display = 'none';
+        vipBlock.style.display = 'none';
+        syncTag.innerText = '+15 грн ➔ Разом 25 грн';
+      } else if (tier === 'PRO') {
+        label.innerText = '🚀 PRO ($0.60 / 25 грн)';
+        label.style.color = '#e879f9';
+        liteBanner.style.display = 'none';
+        proBlock.style.display = 'block';
+        vipBlock.style.display = 'none';
+        syncTag.innerText = '+15 грн ➔ Разом 40 грн';
+      } else {
+        label.innerText = '👑 VIP STUDIO ($1.20 / 50 грн)';
+        label.style.color = '#fde047';
+        liteBanner.style.display = 'none';
+        proBlock.style.display = 'block';
+        vipBlock.style.display = 'block';
+        syncTag.innerText = '+10 грн ➔ Разом 60 грн';
+      }
+      renderCards();
+    }
+
+    function toggleAutoSync() {
+      const checked = document.getElementById('autoSyncCheck').checked;
+      document.getElementById('autoSyncSettings').style.display = checked ? 'block' : 'none';
+      document.getElementById('directSyncBtn').style.display = checked ? 'inline-block' : 'none';
+      renderCards();
+    }
+
+    function getUnitCost() {
+      let base = TIER_COSTS[currentTier] || 25;
+      if (document.getElementById('autoSyncCheck').checked) base += (currentTier === 'VIP' ? 10 : 15);
+      return base;
+    }
+
+    function toggleLang(el) {
+      const activeCount = document.querySelectorAll('.lang-chip.active').length;
+      if (el.classList.contains('active') && activeCount <= 1) return showToast('⚠️ Має бути обрана хоча б одна мова!');
+      el.classList.toggle('active');
+      renderCards();
+    }
+
+    function getSelectedLangs() {
+      if (currentTier === 'LITE') return ['UA', 'EN'];
+      return Array.from(document.querySelectorAll('.lang-chip.active')).map(el => el.getAttribute('data-lang'));
+    }
+
+    function extractPriceFromFilename(filename) {
+      const clean = filename.replace(/\.[^/.]+$/, "").replace(/\d{4}-\d{2}-\d{2}[_-]\d{2}-\d{2}-\d{2}/g, "");
+      const m1 = clean.match(/(\d{2,5})\s*(?:uah|грн|usd|\$)/i);
+      if (m1) return `${m1[1]} грн`;
+      const m2 = clean.match(/(?:price|tsina|_)(\d{3,5})$/i);
+      if (m2 && parseInt(m2[1], 10) !== 2025 && parseInt(m2[1], 10) !== 2026) return `${m2[1]} грн`;
+      return null;
+    }
+
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+    dropZone.addEventListener('dragover', (e) => e.preventDefault());
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+
+    function addFiles(files) {
+      for (const f of files) {
+        fileQueue.push({
+          file: f,
+          previewUrl: URL.createObjectURL(f),
+          status: 'pending',
+          detectedPrice: extractPriceFromFilename(f.name),
+          brandHint: ''
+        });
+      }
+      fileInput.value = '';
+      renderQueue();
+    }
+
+    function renderQueue() {
+      const list = document.getElementById('queueList');
+      list.innerHTML = '';
+      let totalBytes = 0;
+      fileQueue.forEach((item, idx) => {
+        totalBytes += item.file.size;
+        const row = document.createElement('div');
+        row.className = 'queue-item';
+        const statusIcon = item.status === 'processing' ? '⏳ ' : (item.status === 'done' ? '✅ ' : '');
+        row.innerHTML = `
+          <div class="queue-top-row">
+            <div class="queue-item-left">
+              <img src="${item.previewUrl}" class="queue-thumb" onclick="openModal('${item.previewUrl}')">
+              <span class="queue-name">${statusIcon}${idx + 1}. ${item.file.name}</span>
+              ${item.detectedPrice ? `<span class="parsed-price-tag">💲${item.detectedPrice}</span>` : ''}
+            </div>
+            <button class="btn-remove" onclick="removeFromQueue(${idx})">✕</button>
+          </div>
+          <input type="text" class="queue-hint-input" placeholder="⚡ Експрес-підказка для AI: бренд, тканина (напр. Hellstar, фліс)" value="${item.brandHint || ''}" oninput="fileQueue[${idx}].brandHint=this.value">
+        `;
+        list.appendChild(row);
+      });
+      document.getElementById('queueCount').innerText = `Черга завантаження (${fileQueue.length} шт.)`;
+      document.getElementById('queueSize').innerText = `${(totalBytes / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    function removeFromQueue(idx) { if (!isRunning) { fileQueue.splice(idx, 1); renderQueue(); } }
+    function clearQueue() { if (!isRunning) { fileQueue = []; renderQueue(); } }
+
+    function clearOutputWindow() {
+      processedItems = [];
+      localStorage.removeItem('autorank_saved_cards_v8');
+      renderCards();
+    }
+
+    function deleteSingleCard(idx) {
+      processedItems.splice(idx, 1);
+      saveSession();
+      renderCards();
+    }
+
+    function topUpCredits() {
+      credits += 420;
+      localStorage.setItem('autorank_balance_v8', credits);
+      updateBalanceDisplay();
+      showToast('⚡ Баланс поповнено на +$10.00 USDT (+420 грн)!');
+    }
+
+    function openModal(src) {
+      document.getElementById('modalImg').src = src;
+      document.getElementById('imgModal').style.display = 'flex';
+    }
+
+    function cleanModerationText(str) {
+      return (str || '').replace(STOP_WORDS, '').replace(/\s{2,}/g, ' ').trim();
+    }
+
+    function compressImageBeforeUpload(file, maxSide = 1400, quality = 0.86) {
+      return new Promise((resolve) => {
+        if (file.size < 400 * 1024 && file.type === 'image/jpeg') return resolve(file);
+        const img = new Image();
+        img.onload = () => {
+          let w = img.naturalWidth || 1200, h = img.naturalHeight || 1200;
+          if (w > maxSide || h > maxSide) {
+            if (w > h) { h = Math.round((h * maxSide) / w); w = maxSide; }
+            else { w = Math.round((w * maxSide) / h); h = maxSide; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob((blob) => resolve(blob ? new File([blob], "opt.jpg", { type: 'image/jpeg' }) : file), 'image/jpeg', quality);
+        };
+        img.onerror = () => resolve(file);
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    function stopPipeline() {
+      if (abortController) abortController.abort();
+      isRunning = false;
+      document.getElementById('runBtn').disabled = false;
+      document.getElementById('stopBtn').style.display = 'none';
+      showToast('⏹️ Конвеєр зупинено');
+    }
+
+    async function runPipeline() {
+      if (!fileQueue.length) return alert('Додайте хоча б одне фото в чергу ліворуч!');
+      isRunning = true;
+      document.getElementById('runBtn').disabled = true;
+      document.getElementById('stopBtn').style.display = 'block';
+      const progressBox = document.getElementById('progressBox');
+      const progressFill = document.getElementById('progressFill');
+      const progressLabel = document.getElementById('progressLabel');
+      const progressPercent = document.getElementById('progressPercent');
+      progressBox.style.display = 'block';
+
+      const total = fileQueue.length;
+      const skuPrefix = currentTier === 'LITE' ? 'SKU-' : (document.getElementById('skuPrefixInput').value || 'SKU-').trim();
+      const defaultPrice = currentTier === 'LITE' ? '1299 грн' : (document.getElementById('defaultPriceInput').value || '1299 грн').trim();
+      const oldPrice = currentTier === 'VIP' ? (document.getElementById('oldPriceInput').value || '').trim() : '';
+      const brandFooter = currentTier === 'VIP' ? (document.getElementById('brandFooterInput').value || '').trim() : '';
+      const langs = getSelectedLangs().join(',');
+      const categoryVal = currentTier === 'LITE' ? 'Одяг та Взуття (Fashion)' : document.getElementById('categorySelect').value;
+      const bgStyleVal = currentTier === 'LITE' ? 'white_shadow' : document.getElementById('bgStyleSelect').value;
+
+      for (let i = 0; i < total; i++) {
+        if (!isRunning) break;
+        fileQueue[i].status = 'processing';
+        renderQueue();
+
+        const pct = Math.round(((i + 0.35) / total) * 100);
+        progressFill.style.width = `${pct}%`;
+        progressLabel.innerText = `[${currentTier}] Обробка фото ${i + 1} з ${total}: Photoroom + Gemini SEO...`;
+        progressPercent.innerText = `${pct}%`;
+
+        abortController = new AbortController();
+
+        try {
+          const optimizedFile = await compressImageBeforeUpload(fileQueue[i].file);
+          const formData = new FormData();
+          formData.append('category', categoryVal);
+          formData.append('bgStyle', bgStyleVal);
+          formData.append('tier', currentTier);
+          formData.append('languages', langs);
+          formData.append('brand_hint', fileQueue[i].brandHint || '');
+          formData.append('correction_note', fileQueue[i].brandHint || '');
+          formData.append('data0', optimizedFile);
+
+          const res = await fetch(WEBHOOK_URL, { method: 'POST', body: formData, signal: abortController.signal });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const rawData = await res.json();
+          const arr = Array.isArray(rawData) ? rawData : [rawData];
+          const d = (arr[0] && arr[0].json) ? arr[0].json : (arr[0] || {});
+
+          const validImg = (d.image_base64 && d.image_base64.startsWith('data:image') && !d.image_base64.includes('filesystem'))
+            ? d.image_base64
+            : fileQueue[i].previewUrl;
+
+          const itemNumber = 1001 + processedItems.length;
+          const detectedBrand = d.brand || fileQueue[i].brandHint || 'Не вказано';
+          let finalTitleUa = cleanModerationText(d.title_ua || `Позиція каталогу #${itemNumber}`);
+          if (fileQueue[i].brandHint && !finalTitleUa.toLowerCase().includes(fileQueue[i].brandHint.toLowerCase())) {
+            finalTitleUa = `${finalTitleUa} ${fileQueue[i].brandHint}`;
+          }
+
+          let finalDesc = cleanModerationText(d.description || 'Очікується опис товару');
+          if (brandFooter) finalDesc += ` ${brandFooter}`;
+
+          processedItems.unshift({
+            sku: `${skuPrefix}${itemNumber}`,
+            brand: detectedBrand,
+            category: categoryVal,
+            tier: currentTier,
+            title_ua: finalTitleUa,
+            title_en: cleanModerationText(d.title_en || `Catalog Item ${skuPrefix}${itemNumber}`),
+            description: finalDesc,
+            characteristics: d.characteristics || 'Визначено візуально за фото',
+            keywords: d.keywords || '',
+            price: fileQueue[i].detectedPrice || defaultPrice,
+            oldPrice: oldPrice,
+            imageSrc: validImg
+          });
+
+          fileQueue[i].status = 'done';
+          renderQueue();
+          saveSession();
+          renderCards();
+
+          const donePct = Math.round(((i + 1) / total) * 100);
+          progressFill.style.width = `${donePct}%`;
+          progressPercent.innerText = `${donePct}%`;
+        } catch (err) {
+          if (err.name === 'AbortError') break;
+          fileQueue[i].status = 'pending';
+          renderQueue();
+          showToast(`❌ Помилка: ${err.message}`);
+        }
+      }
+
+      isRunning = false;
+      document.getElementById('runBtn').disabled = false;
+      document.getElementById('stopBtn').style.display = 'none';
+      setTimeout(() => { if (!isRunning) progressBox.style.display = 'none'; }, 1500);
+    }
+
+    function copyFieldText(text) {
+      navigator.clipboard.writeText(text);
+      showToast('📋 Скопійовано в буфер!');
+    }
+
+    function copyInstagramPost(idx) {
+      const item = processedItems[idx];
+      const post = `🔥 НОВИНКА: ${item.title_ua}!\n🏷️ Бренд: ${item.brand || 'Оригінал'}\n\n✨ ${item.description}\n\n📌 Характеристики:\n${item.characteristics}\n\n💰 Ціна: ${item.price}\n📦 Артикул: ${item.sku}`;
+      navigator.clipboard.writeText(post);
+      showToast('📱 Пост для Instagram / TG скопійовано!');
+    }
+
+    function renderCards() {
+      const container = document.getElementById('cardsContainer');
+      const selectedLangs = getSelectedLangs();
+      const wmText = currentTier === 'VIP' ? (document.getElementById('watermarkTextInput').value || '').trim() : '';
+      const badgeText = currentTier === 'VIP' ? (document.getElementById('badgeTextInput').value || '').trim() : '';
+      container.innerHTML = '';
+
+      if (processedItems.length === 0) {
+        document.getElementById('exportBanner').style.display = 'none';
+        document.getElementById('processedCounter').innerText = 'Карток: 0 шт.';
+        container.innerHTML = `
+          <div class="empty-state">
+            Завантажте фото ліворуч та натисніть зелену кнопку запуску 🤪🚀<br>
+            <span style="font-size:11.5px; color:#94a3b8;">Бажаєте протестувати кабінет доопрацювання <b>🎛️ Studio Control Hub</b> прямо зараз?</span><br>
+            <button class="btn-control-hub" style="margin-top:12px;" onclick="loadDemoAndOpenHub()">🎛️ Відкрити Studio Control Hub (Демо-картка)</button>
+          </div>`;
+        return;
+      }
+
+      const unitCost = getUnitCost();
+      const totalUnlockCost = processedItems.length * unitCost;
+
+      document.getElementById('exportBanner').style.display = 'block';
+      document.getElementById('exportTitle').innerText = `✅ Каталог сформовано (${processedItems.length} шт.) — Тариф ${currentTier}`;
+      document.getElementById('processedCounter').innerText = `Карток: ${processedItems.length} шт.`;
+      document.getElementById('unlockBtn').innerText = previewsUnlocked
+        ? '✅ Фото розблоковано'
+        : `🔓 Розблокувати пакет (${totalUnlockCost} грн)`;
+
+      processedItems.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="card-img-wrap ${previewsUnlocked ? '' : 'locked-blur'}" onclick="openModal('${item.imageSrc}')">
+            <img src="${item.imageSrc}" alt="${item.sku}" crossorigin="anonymous">
+            ${badgeText ? `<div class="infographic-badge">${badgeText}</div>` : ''}
+            ${wmText ? `<div class="brand-wm-badge">${wmText}</div>` : ''}
+            ${previewsUnlocked ? '' : `<div class="watermark-overlay">🔒 PREVIEW (${unitCost} грн)<br>Клік — збільшити</div>`}
+          </div>
+          <div>
+            <div class="card-top-bar">
+              <div>
+                <span class="card-meta">АРТИКУЛ: ${item.sku}</span>
+                ${item.brand && item.brand !== 'Не вказано' ? `<span class="brand-pill">🏷️ ${item.brand}</span>` : ''}
+              </div>
+              <div class="card-top-right">
+                ${item.oldPrice ? `<span class="old-price">${item.oldPrice}</span>` : ''}
+                <span class="card-price">${item.price}</span>
+                <button class="btn-delete-card" onclick="deleteSingleCard(${idx})">✕</button>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="card-title">${item.title_ua}</div>
+              <button class="btn-copy-mini" onclick="copyFieldText(processedItems[${idx}].title_ua)">📋</button>
+            </div>
+            <div class="field-row">
+              <div class="card-title-sub">🌍 Мови (${selectedLangs.join('/')}): ${item.title_en}</div>
+              <button class="btn-copy-mini" onclick="copyFieldText(processedItems[${idx}].title_en)">📋</button>
+            </div>
+            <div class="field-row">
+              <div class="card-desc">${item.description}</div>
+              <button class="btn-copy-mini" onclick="copyFieldText(processedItems[${idx}].description)">📋</button>
+            </div>
+            <div class="field-row">
+              <div class="card-specs"><strong>Характеристики:</strong> ${item.characteristics}</div>
+              <button class="btn-copy-mini" onclick="copyFieldText(processedItems[${idx}].characteristics)">📋</button>
+            </div>
+            <div class="field-row">
+              <div class="card-keys"><strong>Пошукові запити:</strong> ${item.keywords}</div>
+              <button class="btn-copy-mini" onclick="copyFieldText(processedItems[${idx}].keywords)">📋</button>
+            </div>
+            <div class="card-btns">
+              <button class="btn-card" onclick="openControlHub(${idx})" style="border-color:#a855f7; color:#f3e8ff;">🎛️ Доопрацювати в Studio Control Hub</button>
+              <button class="btn-card" onclick="downloadPNG(${idx})">🖼️ Фото (.PNG)</button>
+              <button class="btn-card" onclick="downloadTXT(${idx})">📄 Паспорт (.TXT)</button>
+              <button class="btn-card" onclick="copyInstagramPost(${idx})">📱 Пост для Instagram</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Якщо карток ще немає, створює демо-картку худі Hellstar, щоб одразу показати Studio Control Hub
+    function loadDemoAndOpenHub() {
+      if (processedItems.length === 0) {
+        processedItems.push({
+          sku: 'SKU-1001',
+          brand: 'Hellstar',
+          category: 'Одяг та Взуття (Fashion)',
+          tier: currentTier,
+          title_ua: 'Худі чоловіче Hellstar на блискавці з капюшоном та графічним принтом помаранчеве',
+          title_en: 'Mens Hellstar zip-up graphic hoodie orange',
+          description: 'Фірмове чоловіче худі Hellstar вільного крою на центральній застібці-блискавці, оснащене глибоким капюшоном та кишенею-кенгуру. Щільний бавовняний трикотаж на флісі.',
+          characteristics: 'Бренд: Hellstar | Тип виробу: Худі на блискавці | Стать: Чоловіча | Колір: Помаранчевий | Склад: 80% бавовна, 20% поліестер',
+          keywords: 'худі hellstar, чоловіче худі на блискавці, помаранчеве худі з принтом, кофта з капюшоном',
+          price: '1850 грн',
+          oldPrice: '2290 грн',
+          imageSrc: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%23ffffff"/><path d="M120 90 L160 70 L240 70 L280 90 L330 160 L290 190 L270 150 L270 320 L130 320 L130 150 L110 190 L70 160 Z" fill="%23ea580c"/><text x="200" y="210" font-family="sans-serif" font-size="22" font-weight="bold" fill="%23ffffff" text-anchor="middle">HELLSTAR</text></svg>'
+        });
+        saveSession();
+        renderCards();
+      }
+      openControlHub(0);
+    }
+
+    function openControlHub(index = 0) {
+      if (!processedItems.length) {
+        loadDemoAndOpenHub();
+        return;
+      }
+      currentHubIndex = index;
+      document.getElementById('controlHubModal').style.display = 'flex';
+      renderHubSidebar();
+      loadHubItem(currentHubIndex);
+    }
+
+    function closeControlHub() {
+      document.getElementById('controlHubModal').style.display = 'none';
+      saveSession();
+      renderCards();
+    }
+
+    function renderHubSidebar() {
+      const list = document.getElementById('hubSidebarList');
+      list.innerHTML = '';
+      processedItems.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'hub-item' + (idx === currentHubIndex ? ' active' : '');
+        div.onclick = () => loadHubItem(idx);
+        div.innerHTML = `
+          <img src="${item.imageSrc}">
+          <div class="hub-item-info">
+            <div class="hub-item-sku">${item.sku} ${item.brand ? '• ' + item.brand : ''}</div>
+            <div class="hub-item-title">${item.title_ua}</div>
+            <div class="hub-item-price">${item.price}</div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function loadHubItem(idx) {
+      if (idx < 0 || idx >= processedItems.length) return;
+      currentHubIndex = idx;
+      const item = processedItems[idx];
+      document.getElementById('hubItemCounter').innerText = `Товар ${idx + 1} з ${processedItems.length}`;
+      document.getElementById('hubImg').src = item.imageSrc;
+      document.getElementById('hubSku').value = item.sku || '';
+      document.getElementById('hubBrand').value = item.brand || '';
+      document.getElementById('hubPrice').value = item.price || '';
+      document.getElementById('hubOldPrice').value = item.oldPrice || '';
+      document.getElementById('hubTitleUa').value = item.title_ua || '';
+      document.getElementById('hubTitleEn').value = item.title_en || '';
+      document.getElementById('hubDesc').value = item.description || '';
+      document.getElementById('hubSpecs').value = item.characteristics || '';
+      document.getElementById('hubKeys').value = item.keywords || '';
+      document.getElementById('hubCorrectionNote').value = '';
+      renderHubSidebar();
+    }
+
+    function hubNavigate(dir) {
+      let next = currentHubIndex + dir;
+      if (next < 0) next = processedItems.length - 1;
+      if (next >= processedItems.length) next = 0;
+      loadHubItem(next);
+    }
+
+    function saveHubField(field, val) {
+      if (!processedItems[currentHubIndex]) return;
+      processedItems[currentHubIndex][field] = val;
+      saveSession();
+      renderHubSidebar();
+    }
+
+    async function runHubRework(mode) {
+      const item = processedItems[currentHubIndex];
+      const note = document.getElementById('hubCorrectionNote').value.trim();
+      const brandVal = document.getElementById('hubBrand').value.trim();
+      if (!note && !brandVal) return alert('Напишіть у поле зауваження або бренд, що потрібно виправити!');
+
+      const btnSeo = document.getElementById('btnReworkSeo');
+      const btnFull = document.getElementById('btnReworkFull');
+      btnSeo.disabled = true; btnFull.disabled = true;
+      showToast('🤖 Відправляємо на доопрацювання в n8n...');
+
+      try {
+        const resp = await fetch(item.imageSrc);
+        const blob = await resp.blob();
+        const file = new File([blob], `${item.sku}.jpg`, { type: blob.type || 'image/jpeg' });
+
+        const formData = new FormData();
+        formData.append('category', item.category);
+        formData.append('bgStyle', mode === 'seo_only' ? 'seo_only' : document.getElementById('bgStyleSelect').value);
+        formData.append('tier', currentTier);
+        formData.append('languages', getSelectedLangs().join(','));
+        formData.append('brand_hint', brandVal);
+        formData.append('correction_note', `${brandVal ? 'Бренд: ' + brandVal + '. ' : ''}${note}`);
+        formData.append('data0', file);
+
+        const res = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const rawData = await res.json();
+        const arr = Array.isArray(rawData) ? rawData : [rawData];
+        const d = (arr[0] && arr[0].json) ? arr[0].json : (arr[0] || {});
+
+        if (d.title_ua) item.title_ua = cleanModerationText(d.title_ua);
+        if (brandVal && !item.title_ua.toLowerCase().includes(brandVal.toLowerCase())) item.title_ua = `${item.title_ua} ${brandVal}`;
+        if (d.title_en) item.title_en = cleanModerationText(d.title_en);
+        if (d.description) item.description = cleanModerationText(d.description);
+        if (d.characteristics) item.characteristics = d.characteristics;
+        if (d.keywords) item.keywords = d.keywords;
+        if (d.brand) item.brand = d.brand;
+        else if (brandVal) item.brand = brandVal;
+
+        saveSession();
+        loadHubItem(currentHubIndex);
+        showToast('✅ Картку перероблено за вашим зауваженням!');
+      } catch (e) {
+        showToast(`❌ Помилка зв'язку з n8n: ${e.message}`);
+      } finally {
+        btnSeo.disabled = false; btnFull.disabled = false;
+      }
+    }
+
+    function unlockAllPreviews() {
+      if (previewsUnlocked) return;
+      const cost = (processedItems.length || 1) * getUnitCost();
+      if (credits < cost) return alert('Недостатньо коштів! Натисніть + USDT.');
+      credits -= cost;
+      localStorage.setItem('autorank_balance_v8', credits);
+      updateBalanceDisplay();
+      previewsUnlocked = true;
+      renderCards();
+      showToast(`🔓 Пакет розблоковано (-${cost} грн)!`);
+    }
+
+    function syncDirectToStore() {
+      const url = document.getElementById('storeUrlInput').value.trim();
+      if (!url) return alert('Вкажіть URL магазину та API-ключ у лівому меню!');
+      showToast(`🚀 Відправляємо товари в магазин ${url}...`);
+    }
+
+    function printWarehouseLabels() {
+      if (!processedItems.length) return alert('Немає товарів для друку!');
+      const win = window.open('', '_blank');
+      const html = processedItems.map(item => `
+        <div style="border:2px solid #000; padding:12px; margin:10px; width:250px; display:inline-block; font-family:sans-serif; text-align:center;">
+          <div style="font-size:11px; font-weight:bold;">AUTORANK WAREHOUSE</div>
+          <div style="font-size:17px; font-weight:900; margin:5px 0;">${item.sku}</div>
+          <div style="font-size:12px; font-weight:bold;">Бренд: ${item.brand || '-'}</div>
+          <div style="font-size:11px; height:28px; overflow:hidden;">${item.title_ua}</div>
+          <div style="font-family:monospace; font-size:20px; letter-spacing:3px; margin:6px 0;">||| |||| || |||| |||</div>
+          <div style="font-size:14px; font-weight:bold;">Ціна: ${item.price}</div>
+        </div>`).join('');
+      win.document.write(`<html><body onload="window.print()">${html}</body></html>`);
+      win.document.close();
+    }
+
+    function imageToPngBlob(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 1000; canvas.height = 1000;
+          const ctx = canvas.getContext('2d');
+          if (document.getElementById('bgStyleSelect').value !== 'transparent') {
+            ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1000, 1000);
+          }
+          const scale = Math.min(840 / (img.naturalWidth || 1000), 840 / (img.naturalHeight || 1000));
+          const w = (img.naturalWidth || 1000) * scale, h = (img.naturalHeight || 1000) * scale;
+          ctx.drawImage(img, (1000 - w) / 2, (1000 - h) / 2, w, h);
+          canvas.toBlob((b) => resolve(b), 'image/png');
+        };
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+    }
+
+    async function downloadPNG(idx) {
+      const item = processedItems[idx];
+      const blob = await imageToPngBlob(item.imageSrc);
+      if (!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = `${item.sku}.png`;
+      a.click();
+    }
+
+    function buildTxtContent(item) {
+      return `=== AUTORANK STUDIO V8.1 ===\r\nSKU: ${item.sku}\r\nБренд: ${item.brand || '-'}\r\nНазва (UA): ${item.title_ua}\r\nНазва (Інші): ${item.title_en}\r\nЦіна: ${item.price}\r\n\r\nОпис:\r\n${item.description}\r\n\r\nХарактеристики: ${item.characteristics}\r\nКлючі: ${item.keywords}`;
+    }
+
+    function downloadTXT(idx) {
+      const item = processedItems[idx];
+      const blob = new Blob(['\uFEFF' + buildTxtContent(item)], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = `${item.sku}.txt`;
+      a.click();
+    }
+
+    function buildCsvString() {
+      const headers = ['Код_товару', 'Бренд', 'Назва_позиції_UA', 'Назва_позиції_EN', 'Пошукові_запити', 'Опис', 'Ціна', 'Валюта', 'Характеристики'];
+      const rows = processedItems.map(item => [
+        item.sku,
+        `"${(item.brand || '').replace(/"/g, '""')}"`,
+        `"${(item.title_ua || '').replace(/"/g, '""')}"`,
+        `"${(item.title_en || '').replace(/"/g, '""')}"`,
+        `"${(item.keywords || '').replace(/"/g, '""')}"`,
+        `"${(item.description || '').replace(/"/g, '""')}"`,
+        (item.price || '1299').replace(/[^\d.]/g, '') || '1299',
+        'UAH',
+        `"${(item.characteristics || '').replace(/"/g, '""')}"`
+      ].join(';'));
+      return '\uFEFF' + [headers.join(';'), ...rows].join('\r\n');
+    }
+
+    function downloadCSV() {
+      const blob = new Blob([buildCsvString()], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = `AutoRank_Export_v8.csv`;
+      a.click();
+    }
+
+    function downloadXML() {
+      const offers = processedItems.map(item => `<offer id="${item.sku}" available="true"><price>${(item.price || '1299').replace(/[^\d.]/g, '')}</price><currencyId>UAH</currencyId><vendor>${item.brand || 'AutoRank'}</vendor><name>${item.title_ua}</name><description><![CDATA[${item.description}]]></description></offer>`).join('');
+      const xml = `<?xml version="1.0" encoding="UTF-8"?><yml_catalog><shop><offers>${offers}</offers></shop></yml_catalog>`;
+      const blob = new Blob([xml], { type: 'application/xml;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = `AutoRank_Rozetka.xml`;
+      a.click();
+    }
+
+    async function downloadAllZIP() {
+      if (!window.JSZip) return;
+      showToast('📦 Формуємо ZIP-архів...');
+      const zip = new JSZip();
+      zip.file('AutoRank_Export_v8.csv', buildCsvString());
+      for (let i = 0; i < processedItems.length; i++) {
+        const item = processedItems[i];
+        zip.file(`Cards_TXT/${item.sku}.txt`, '\uFEFF' + buildTxtContent(item));
+        const png = await imageToPngBlob(item.imageSrc);
+        if (png) zip.file(`Photos_PNG/${item.sku}.png`, png);
+      }
+      const b = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = `AutoRank_Package.zip`;
+      a.click();
+    }
+  </script>
+</body>
+</html>

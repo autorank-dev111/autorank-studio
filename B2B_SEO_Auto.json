@@ -1,0 +1,300 @@
+{
+  "name": "B2B_SEO_Auto",
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -1728,
+        -304
+      ],
+      "id": "b1a01f01-6110-4b12-b4cd-691e9962cf38",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TjfdIAhAgjKOVTmP",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sdk.photoroom.com/v1/segment",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "sandbox_sk_pr_default_1aa6c002bf82a4e54a459031c005b6ca0d702b5e"
+            },
+            {
+              "name": "Accept",
+              "value": "image/png"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image_file",
+              "inputDataFieldName": "data0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -2288,
+        -688
+      ],
+      "id": "6b0f804d-1b6c-49b9-89ea-882699417053",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2048,
+        -688
+      ],
+      "id": "2057421a-2f27-4e4a-ae83-23b491564149",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1936,
+        -512
+      ],
+      "id": "0a2ac8b2-04db-413e-895e-9ecfc87ba70c",
+      "name": "Wait",
+      "webhookId": "a4e676e4-ebd2-452f-b561-3e3682e7e3f6"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5fad5afa-5b4b-4e14-bf70-c9034d973fb5",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -2528,
+        -688
+      ],
+      "id": "f1cdb2a5-eed2-4ae7-a1ef-089a8317e520",
+      "name": "Webhook",
+      "webhookId": "5fad5afa-5b4b-4e14-bf70-c9034d973fb5"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -1616,
+        -704
+      ],
+      "id": "80d12c4d-8b0f-4579-9113-4fa8912e0387",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Ти — безжальний головний редактор каталогу та топ-спеціаліст з E-commerce SEO (стандарти Rozetka та Prom.ua). Твоя мета — проаналізувати зображення товару, автоматично визначити його категорію (Одяг/Взуття, Продукти харчування/FMCG, Побутова хімія або Електроніка) і створити комерційну картку сухою мовою користі, без водянистих епітетів.\n\nСУВОРО ЗАБОРОНЕНО:\n- Вигадувати характеристики, склад, вагу чи бренди, яких не видно на фото.\n- Писати вступні слова, зірочки Markdown (**) або підзаголовки \"Коротке резюме:\" чи \"Заклик до дії:\" всередині тексту.\n\nФОРМАТ ВІДПОВІДІ (поверни РІВНО 5 рядків у такому форматі, без жодного іншого тексту):\nTITLE_UA: [чіткий заголовок українською: Тип виробу + стать/призначення + крій/особливість + колір]\nTITLE_EN: [точний переклад заголовка англійською]\nDESCRIPTION: [2-3 інформативні речення про конструкцію, призначення та практичні деталі товару, які видно на фото, завершені лаконічним закликом до замовлення]\nSPECS: [Назва параметра: Значення | Назва параметра: Значення | Назва параметра: Значення]\nKEYWORDS: [7-8 комерційних пошукових словосполучень українською через кому для пошуку на Prom/Rozetka]",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "messageType": "imageBinary"
+            }
+          ]
+        }
+      },
+      "name": "Basic LLM Chain1",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        -1728,
+        -512
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 4000,
+      "id": "651d57ef-a1e5-4235-947f-c31f8419c3eb",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "let results = [];\n\n// 1. Забираємо відповідь від Gemini (перевіряємо обидві можливі назви ноди)\nlet aiItems = [];\ntry { aiItems = $('Basic LLM Chain1').all(); } catch (e) {\n  try { aiItems = $('Basic LLM Chain').all(); } catch (e2) {}\n}\n\n// 2. Забираємо елементи з Photoroom (HTTP Request)\nconst photoItems = $('HTTP Request').all();\nconst count = Math.max(photoItems.length, 1);\n\nfor (let i = 0; i < count; i++) {\n  const aiItem = aiItems[i] || aiItems[0] || {};\n  const rawAiText = (\n    (aiItem.json && (aiItem.json.text || aiItem.json.output || aiItem.json.response)) || ''\n  ).replace(/\\*\\*/g, '').trim();\n\n  const extractField = (label) => {\n    const regex = new RegExp(label + ':\\\\s*(.+)', 'i');\n    const match = rawAiText.match(regex);\n    return match ? match[1].trim() : '';\n  };\n\n  const titleUa = extractField('TITLE_UA') || (rawAiText.split('\\n')[0] || `Позиція каталогу #${i + 1}`);\n  const titleEn = extractField('TITLE_EN') || `Catalog Item SKU-${1001 + i}`;\n  const description = extractField('DESCRIPTION') || rawAiText || 'Помилка отримання тексту від Gemini';\n  const specs = extractField('SPECS') || 'Визначено візуально за фото';\n  const keywords = extractField('KEYWORDS') || titleUa.toLowerCase();\n\n  // 3. Витягуємо справжній файл Photoroom (навіть якщо він схований у filesystem-v2)\n  let imageBase64 = null;\n  try {\n    const targetItem = photoItems[i] || photoItems[0];\n    if (targetItem && targetItem.binary) {\n      const binKey = targetItem.binary.data ? 'data' : Object.keys(targetItem.binary)[0];\n      const binObj = targetItem.binary[binKey];\n      if (binObj) {\n        const mime = binObj.mimeType || 'image/png';\n        if (binObj.data && binObj.data !== 'filesystem-v2' && !binObj.data.includes('filesystem')) {\n          imageBase64 = binObj.data.startsWith('data:') ? binObj.data : `data:${mime};base64,${binObj.data}`;\n        } else {\n          // Читаємо бінарний буфер з диска n8n через вбудований хелпер\n          const buffer = await this.helpers.getBinaryDataBuffer(i, binKey);\n          imageBase64 = `data:${mime};base64,${buffer.toString('base64')}`;\n        }\n      }\n    }\n  } catch (err) {\n    // Якщо прямий буфер недоступний з чужої ноди, беремо з поточного входу\n    try {\n      const buffer = await this.helpers.getBinaryDataBuffer(0, 'data');\n      imageBase64 = `data:image/png;base64,${buffer.toString('base64')}`;\n    } catch (e2) {}\n  }\n\n  results.push({\n    json: {\n      id: i + 1,\n      sku: `SKU-${1001 + i}`,\n      title_ua: titleUa,\n      title_en: titleEn,\n      description: description,\n      characteristics: specs,\n      keywords: keywords,\n      image_base64: imageBase64,\n      status: \"success\"\n    }\n  });\n}\n\nreturn results;"
+      },
+      "name": "Code in JavaScript1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1808,
+        -704
+      ],
+      "id": "5ec72e20-dd58-4335-8493-47e550f8acf8"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -1424,
+        -400
+      ],
+      "id": "3203b72f-5bb0-4d28-94ff-8e38b6f7cb88",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TjfdIAhAgjKOVTmP",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "63be44aa-7a0c-40fc-ae24-5c1adab8191c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16a49b561b9060e2c8a379b01258bfc63ae7c0c30a557fe7532b75a9bdbb005b"
+  },
+  "nodeGroups": [],
+  "id": "e1DElcKE9YJeqdj9",
+  "tags": []
+}
