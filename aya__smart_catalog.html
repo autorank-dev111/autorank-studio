@@ -3,330 +3,785 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoRank Studio v8.1 | E-Commerce AI & SEO Conveyor</title>
+  <title>AutoRank Studio | Obsidian AI & SEO Conveyor</title>
+  <link rel="icon" type="image/jpeg" href="logo.png.jpg">
+  <link rel="apple-touch-icon" href="logo.png.jpg">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     :root {
-      --bg-deep: #050811;
-      --glass-crystal: rgba(14, 21, 38, 0.22);
-      --glass-card: rgba(18, 27, 48, 0.30);
-      --glass-border: rgba(255, 255, 255, 0.18);
-      --glass-highlight: rgba(255, 255, 255, 0.32);
-      --neon-purple: #a855f7;
-      --neon-pink: #ec4899;
-      --neon-green: #10b981;
-      --neon-cyan: #06b6d4;
-      --neon-amber: #f59e0b;
+      --bg-obsidian: #05070b;
+      --bg-panel: rgba(13, 17, 26, 0.72);
+      --bg-card: rgba(18, 23, 34, 0.78);
+      --bg-input: rgba(7, 10, 16, 0.85);
+      --border-titanium: rgba(255, 255, 255, 0.11);
+      --border-highlight: rgba(255, 255, 255, 0.22);
+      --sapphire: #7dd3fc;
+      --sapphire-bright: #bae6fd;
+      --sapphire-deep: #38bdf8;
+      --emerald: #34d399;
+      --amber: #fbbf24;
+      --danger: #f87171;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
     body {
-      background-color: var(--bg-deep);
+      background-color: var(--bg-obsidian);
       background-image:
-        radial-gradient(circle at 14% 20%, rgba(168, 85, 247, 0.25) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.22) 0%, transparent 42%),
-        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 0%, transparent 45%);
+        radial-gradient(circle at 88% 8%, rgba(125, 211, 252, 0.20) 0%, transparent 42%),
+        radial-gradient(circle at 12% 88%, rgba(56, 189, 248, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
       color: var(--text-main);
       min-height: 100vh;
       overflow-x: hidden;
-      padding: 12px 18px;
+      padding: 16px 20px;
     }
 
-    /* Дрібний та густий маркетинговий візерунок у стилі WhatsApp (90x90px) */
-    .whatsapp-pattern {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.11;
-      background-size: 95px 95px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' fill='none' stroke='%23e2e8f0' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14a3 3 0 0 1 5 2c0 2-4 3-4 5m-11 7l12-7 12 7H8z'/%3E%3Cpath d='M58 10h9l8 8-9 9-8-8V10z'/%3E%3Ccircle cx='62' cy='14' r='1'/%3E%3Ccircle cx='98' cy='28' r='1.5'/%3E%3Ccircle cx='107' cy='28' r='1.5'/%3E%3Cpath d='M90 12h4l3 11h12l2-8H96'/%3E%3Cpath d='M14 52l10-5 10 5v12l-10 5-10-5V52z'/%3E%3Cpath d='M14 52l10 5 10-5M24 57v12'/%3E%3Cpath d='M52 66V55m6 11V50m6 16V44m-15 22h18'/%3E%3Cpath d='M90 48v16m3-16v16m4-16v16m2-16v16m5-16v16'/%3E%3Cpath d='M16 90l5-3h9l5 3 3 6-4 2-2-4v13H19V94l-2 4-4-2 3-6z'/%3E%3Cpolygon points='60,86 62,91 68,92 64,96 65,102 60,99 55,102 56,96 52,92 58,91'/%3E%3Ccircle cx='98' cy='94' r='6'/%3E%3Cpath d='M103 99l5 5'/%3E%3Cpolygon points='42,29 38,36 42,36 40,42 46,34 42,34'/%3E%3C/svg%3E");
+    /* Тонка преміальна сітка на фоні замість рябого візерунка */
+    .ambient-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 85%);
     }
 
-    /* Прозоре кришталеве скло (без навантаження на процесор) */
     .crystal-glass {
-      background: var(--glass-crystal);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border);
-      border-top: 1px solid var(--glass-highlight);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-titanium);
+      border-top: 1px solid var(--border-highlight);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
     }
 
-    .app-wrapper { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; }
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1560px;
+      margin: 0 auto;
+    }
 
-    /* Компактна шапка в ОДИН рядок */
+    /* ШАПКА У СТИЛІ OBSIDIAN GLASS */
     header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 16px; margin-bottom: 14px; gap: 10px; flex-wrap: nowrap;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 18px;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: nowrap;
     }
-    .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .logo-box {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 16px; color: #fff;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.55);
-    }
-    .brand-title h1 { font-size: 17px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
-    .pro-badge { font-size: 9.5px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); padding: 2px 6px; border-radius: 5px; }
-    .brand-title p { font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* Тарифи LITE / PRO / VIP */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 18px rgba(125, 211, 252, 0.2);
+    }
+
+    .brand-title h1 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+    }
+
+    .brand-title p {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    /* Перемикач тарифів LITE / PRO / VIP (крижаний стиль) */
     .tier-switcher {
-      display: flex; gap: 4px; background: rgba(8, 12, 24, 0.65);
-      padding: 4px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      gap: 4px;
+      background: rgba(5, 7, 11, 0.75);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--border-titanium);
     }
+
     .tier-btn {
-      background: transparent; border: 1px solid transparent; color: var(--text-muted);
-      padding: 6px 11px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
     }
-    .tier-btn.active-lite { background: rgba(6, 182, 212, 0.22); color: #22d3ee; border-color: rgba(6, 182, 212, 0.55); }
-    .tier-btn.active-pro { background: rgba(168, 85, 247, 0.25); color: #e879f9; border-color: rgba(168, 85, 247, 0.55); }
-    .tier-btn.active-vip { background: linear-gradient(90deg, rgba(245, 158, 11, 0.28), rgba(236, 72, 153, 0.28)); color: #fde047; border-color: rgba(245, 158, 11, 0.65); }
 
-    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .tier-btn:hover { color: #fff; }
+
+    .tier-btn.active-lite,
+    .tier-btn.active-pro,
+    .tier-btn.active-vip {
+      background: linear-gradient(135deg, #e0f2fe 0%, #7dd3fc 100%);
+      color: #05070b;
+      font-weight: 800;
+      box-shadow: 0 0 18px rgba(125, 211, 252, 0.45);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
     .btn-hub-header {
-      background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
-      color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 7px 12px;
-      border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); white-space: nowrap;
+      background: rgba(255, 255, 255, 0.07);
+      color: #f8fafc;
+      border: 1px solid rgba(125, 211, 252, 0.35);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
     }
-    .ui-lang-switch { display: flex; background: rgba(8, 12, 24, 0.65); border-radius: 8px; padding: 2px; border: 1px solid rgba(255, 255, 255, 0.14); }
-    .ui-lang-btn { background: transparent; border: none; color: #94a3b8; font-size: 10.5px; font-weight: 800; padding: 4px 7px; border-radius: 6px; cursor: pointer; }
-    .ui-lang-btn.active { background: rgba(255, 255, 255, 0.18); color: #fff; }
 
-    .credit-pill { background: rgba(12, 18, 34, 0.65); border: 1px solid rgba(255, 255, 255, 0.18); padding: 6px 10px; border-radius: 9px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
-    .credit-pill .usdt-val { color: #34d399; font-weight: 800; }
-    .credit-pill .uah-val { color: var(--neon-amber); font-size: 10.5px; }
-    .btn-topup { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 7px 11px; border-radius: 9px; font-weight: 700; font-size: 11.5px; cursor: pointer; }
+    .btn-hub-header:hover {
+      background: rgba(125, 211, 252, 0.14);
+      border-color: var(--sapphire);
+    }
 
-    /* РОБОЧА СІТКА: Широке ліве вікно (44%) та Праве вікно (56%) */
-    .workspace { display: grid; grid-template-columns: 44% 56%; gap: 18px; align-items: start; }
-    .panel { padding: 18px 20px; }
+    .ui-lang-switch {
+      display: flex;
+      background: rgba(5, 7, 11, 0.75);
+      border-radius: 9px;
+      padding: 2px;
+      border: 1px solid var(--border-titanium);
+    }
+
+    .ui-lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 5px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .ui-lang-btn.active {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+
+    .credit-pill {
+      background: rgba(5, 7, 11, 0.75);
+      border: 1px solid var(--border-titanium);
+      padding: 6px 11px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .credit-pill .usdt-val { color: var(--emerald); font-weight: 800; }
+    .credit-pill .uah-val { color: var(--text-muted); font-size: 10.5px; }
+
+    .btn-topup {
+      background: rgba(52, 211, 153, 0.16);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      padding: 7px 11px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-topup:hover { background: rgba(52, 211, 153, 0.28); color: #fff; }
+
+    /* РОБОЧА СІТКА BENTO */
+    .workspace {
+      display: grid;
+      grid-template-columns: 42% 58%;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel { padding: 20px; }
+
     .panel-header {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 11.5px; font-weight: 800; letter-spacing: 0.6px; color: #f1f5f9;
-      text-transform: uppercase; padding-bottom: 10px; margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: #f8fafc;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-titanium);
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .lite-banner {
-      display: none; background: rgba(6, 182, 212, 0.14); border: 1px solid rgba(6, 182, 212, 0.45);
-      color: #a5f3fc; padding: 10px 12px; border-radius: 10px; font-size: 11.5px; line-height: 1.45; margin-bottom: 10px;
+      display: none;
+      background: rgba(125, 211, 252, 0.08);
+      border: 1px solid rgba(125, 211, 252, 0.3);
+      color: #e0f2fe;
+      padding: 11px 13px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      line-height: 1.45;
+      margin-bottom: 12px;
     }
 
-    label.field-label { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; margin-top: 8px; font-weight: 600; }
-    select.glass-select, input.glass-input, textarea.glass-input {
-      width: 100%; padding: 8px 11px; border-radius: 9px;
-      background: rgba(8, 13, 26, 0.65); color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.18); font-size: 12px; font-weight: 600; outline: none;
+    label.field-label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      margin-top: 10px;
+      font-weight: 600;
     }
-    .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    select.glass-select,
+    input.glass-input,
+    textarea.glass-input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: var(--bg-input);
+      color: #fff;
+      border: 1px solid var(--border-titanium);
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select.glass-select:focus,
+    input.glass-input:focus,
+    textarea.glass-input:focus {
+      border-color: var(--sapphire);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
     .lang-bar {
-      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;
-      background: rgba(8, 13, 26, 0.5); padding: 7px; border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      background: var(--bg-input);
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border-titanium);
     }
-    .lang-chip {
-      padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 700;
-      background: rgba(255, 255, 255, 0.06); color: #cbd5e1; cursor: pointer; border: 1px solid transparent; user-select: none;
-    }
-    .lang-chip.active { background: rgba(168, 85, 247, 0.28); color: #fff; border-color: var(--neon-purple); }
 
-    .size-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
-    .size-chip {
-      padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 700;
-      background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.16); color: #cbd5e1; cursor: pointer;
+    .lang-chip {
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      cursor: pointer;
+      border: 1px solid transparent;
+      user-select: none;
+      transition: 0.15s;
     }
-    .size-chip.active { background: rgba(16, 185, 129, 0.28); color: #34d399; border-color: var(--neon-green); }
+
+    .lang-chip.active {
+      background: rgba(125, 211, 252, 0.16);
+      color: var(--sapphire-bright);
+      border-color: rgba(125, 211, 252, 0.45);
+    }
+
+    .size-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .size-chip {
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-titanium);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .size-chip.active {
+      background: rgba(52, 211, 153, 0.18);
+      color: var(--emerald);
+      border-color: rgba(52, 211, 153, 0.45);
+    }
 
     .autosync-box {
-      margin-top: 10px; padding: 9px 12px; border-radius: 10px;
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.14), rgba(6, 182, 212, 0.14));
-      border: 1px solid rgba(16, 185, 129, 0.42);
+      margin-top: 12px;
+      padding: 10px 13px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-titanium);
     }
-    .autosync-label { display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 11.5px; font-weight: 700; color: #ecfdf5; }
-    .autosync-price-tag { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 800; }
-    .autosync-settings { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); }
 
+    .autosync-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #e2e8f0;
+      gap: 8px;
+    }
+
+    .autosync-price-tag {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--emerald);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .autosync-settings {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-titanium);
+    }
+
+    /* ЗОНА ЗАВАНТАЖЕННЯ (як на скріншоті №3) */
     .drop-zone {
-      margin-top: 10px; border: 1.5px dashed rgba(168, 85, 247, 0.65);
-      background: rgba(168, 85, 247, 0.08); border-radius: 12px; padding: 13px 10px; text-align: center;
+      margin-top: 14px;
+      border: 1.5px dashed rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .btn-select {
-      width: 100%; padding: 10px; border-radius: 9px; border: none;
-      background: linear-gradient(90deg, #9333ea, #db2777); color: #fff; font-weight: 700; font-size: 12.5px;
-      cursor: pointer; box-shadow: 0 0 16px rgba(168, 85, 247, 0.45); margin-bottom: 5px;
-    }
-    .drop-hint { font-size: 10.5px; color: var(--text-muted); line-height: 1.35; }
 
-    .queue-header { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; margin-top: 10px; margin-bottom: 5px; font-weight: 700; }
-    .queue-list { display: flex; flex-direction: column; gap: 6px; max-height: 185px; overflow-y: auto; }
+    .drop-zone:hover {
+      border-color: var(--sapphire);
+      background: rgba(125, 211, 252, 0.04);
+    }
+
+    .btn-select {
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+      margin-bottom: 7px;
+      transition: 0.2s;
+    }
+
+    .btn-select:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--sapphire);
+    }
+
+    .drop-hint { font-size: 10.5px; color: var(--text-muted); line-height: 1.4; }
+
+    .queue-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-height: 190px;
+      overflow-y: auto;
+    }
+
     .queue-item {
-      display: flex; flex-direction: column; gap: 4px;
-      background: rgba(10, 15, 30, 0.65); border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 6px 9px; border-radius: 9px; font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-titanium);
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 11px;
     }
+
     .queue-top-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .queue-item-left { display: flex; align-items: center; gap: 7px; overflow: hidden; }
-    .queue-thumb { width: 28px; height: 28px; border-radius: 5px; object-fit: cover; cursor: pointer; }
-    .queue-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; font-weight: 600; }
-    .parsed-price-tag { font-size: 9.5px; color: #34d399; background: rgba(16,185,129,0.2); padding: 1px 5px; border-radius: 4px; font-weight: 700; }
+    .queue-item-left { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+    .queue-thumb { width: 30px; height: 30px; border-radius: 6px; object-fit: cover; cursor: pointer; flex-shrink: 0; }
+    .queue-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .parsed-price-tag { font-size: 9.5px; color: var(--emerald); background: rgba(52, 211, 153, 0.16); padding: 2px 6px; border-radius: 5px; font-weight: 700; flex-shrink: 0; }
+
     .queue-hint-input {
-      width: 100%; padding: 4px 7px; border-radius: 6px;
-      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #f8fafc; font-size: 10.5px; outline: none;
+      width: 100%;
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-titanium);
+      color: #f8fafc;
+      font-size: 10.5px;
+      outline: none;
     }
-    .btn-remove { background: none; border: none; color: #f87171; cursor: pointer; font-size: 12.5px; font-weight: 800; }
+
+    .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 800; }
 
     .btn-clear {
-      width: 100%; margin-top: 7px; padding: 7px; border-radius: 8px;
-      background: rgba(239, 68, 68, 0.14); border: 1px solid rgba(239, 68, 68, 0.38);
-      color: #fca5a5; font-size: 11px; font-weight: 700; cursor: pointer;
-    }
-    .run-controls { display: flex; gap: 8px; margin-top: 8px; }
-    .btn-run {
-      flex: 1; padding: 12px; border-radius: 10px; border: none;
-      background: linear-gradient(90deg, #059669, #10b981); color: #fff; font-weight: 800; font-size: 12.5px;
-      cursor: pointer; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-    }
-    .btn-stop {
-      display: none; padding: 12px 15px; border-radius: 10px;
-      background: linear-gradient(90deg, #dc2626, #ef4444); color: #fff; border: none; font-weight: 800; font-size: 12px; cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 10px;
+      background: rgba(248, 113, 113, 0.08);
+      border: 1px solid rgba(248, 113, 113, 0.25);
+      color: #fca5a5;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    /* Права колонка */
-    .right-header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .btn-top-tool {
-      background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #f1f5f9; padding: 5px 10px; border-radius: 7px; font-size: 10.5px; font-weight: 700; cursor: pointer;
+    .run-controls { display: flex; gap: 8px; margin-top: 10px; }
+
+    /* ГОЛОВНА КРИЖАНА КНОПКА (Start AI Engine) */
+    .btn-run {
+      flex: 1;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #e0f2fe 0%, #7dd3fc 50%, #38bdf8 100%);
+      color: #05070b;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(125, 211, 252, 0.45);
+      transition: transform 0.15s, box-shadow 0.2s;
     }
+
+    .btn-run:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(125, 211, 252, 0.65);
+    }
+
+    .btn-run:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-stop {
+      display: none;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* ПРАВА КОЛОНКА (CATALOG WORKSPACE) */
+    .right-header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .btn-top-tool {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-titanium);
+      color: #e2e8f0;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-top-tool:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
     .btn-top-tool.hub-accent {
-      background: rgba(168, 85, 247, 0.25); border-color: #a855f7; color: #f3e8ff;
+      background: rgba(125, 211, 252, 0.12);
+      border-color: rgba(125, 211, 252, 0.35);
+      color: var(--sapphire-bright);
     }
 
     .progress-box {
-      display: none; background: rgba(12, 18, 34, 0.65); border: 1px solid rgba(6, 182, 212, 0.45);
-      border-radius: 11px; padding: 10px 14px; margin-bottom: 12px;
+      display: none;
+      background: var(--bg-input);
+      border: 1px solid rgba(125, 211, 252, 0.35);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
     }
-    .progress-top { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; margin-bottom: 5px; }
-    .progress-track { width: 100%; height: 7px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden; }
-    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink)); transition: width 0.3s ease; }
+
+    .progress-top { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 600; margin-bottom: 6px; color: var(--sapphire-bright); }
+    .progress-track { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--sapphire-deep), var(--sapphire-bright)); transition: width 0.3s ease; }
 
     .export-banner {
-      display: none; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4);
-      border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+      display: none;
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      border-radius: 14px;
+      padding: 13px 15px;
+      margin-bottom: 14px;
     }
-    .export-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-    .export-title { color: #34d399; font-weight: 800; font-size: 13px; }
-    .safe-badge { background: rgba(16, 185, 129, 0.22); border: 1px solid #10b981; color: #6ee7b7; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 5px; }
+
+    .export-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+    .export-title { color: var(--emerald); font-weight: 700; font-size: 13px; }
+    .safe-badge { background: rgba(52, 211, 153, 0.16); border: 1px solid rgba(52, 211, 153, 0.4); color: #6ee7b7; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
     .export-actions { display: flex; gap: 7px; flex-wrap: wrap; }
 
     .btn-control-hub {
-      background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899); border: 1px solid rgba(255,255,255,0.35);
-      color: #fff; padding: 8px 13px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;
+      background: linear-gradient(135deg, #e0f2fe, #7dd3fc);
+      border: none;
+      color: #05070b;
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-weight: 800;
+      font-size: 11.5px;
+      cursor: pointer;
     }
-    .btn-unlock { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.6); color: #fde047; padding: 7px 11px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
-    .btn-csv { background: rgba(139, 92, 246, 0.28); border: 1px solid #a855f7; color: #fff; padding: 7px 11px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
-    .btn-xml { background: rgba(234, 88, 12, 0.28); border: 1px solid #f59e0b; color: #fff; padding: 7px 11px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
-    .btn-zip { background: linear-gradient(90deg, #0284c7, #06b6d4); border: none; color: #fff; padding: 7px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
-    .btn-direct-sync { display: none; background: linear-gradient(90deg, #059669, #10b981); border: 1px solid #6ee7b7; color: #fff; padding: 7px 12px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; }
 
-    .cards-container { display: flex; flex-direction: column; gap: 12px; }
+    .btn-unlock { background: rgba(251, 191, 36, 0.14); border: 1px solid rgba(251, 191, 36, 0.45); color: #fde047; padding: 7px 11px; border-radius: 9px; font-weight: 700; font-size: 11px; cursor: pointer; }
+    .btn-csv, .btn-xml, .btn-zip {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border-titanium);
+      color: #f8fafc;
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-zip { border-color: rgba(125, 211, 252, 0.4); color: var(--sapphire-bright); }
+    .btn-direct-sync { display: none; background: rgba(52, 211, 153, 0.2); border: 1px solid var(--emerald); color: #fff; padding: 7px 12px; border-radius: 9px; font-weight: 700; font-size: 11px; cursor: pointer; }
+
+    /* КАРТКИ ТОВАРІВ */
+    .cards-container { display: flex; flex-direction: column; gap: 14px; }
+
     .product-card {
-      display: grid; grid-template-columns: 170px 1fr; gap: 14px;
-      background: var(--glass-card); border: 1px solid rgba(255, 255, 255, 0.16);
-      border-top: 1px solid rgba(255, 255, 255, 0.28); border-radius: 14px; padding: 13px;
+      display: grid;
+      grid-template-columns: 185px 1fr;
+      gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-titanium);
+      border-top: 1px solid var(--border-highlight);
+      border-radius: 16px;
+      padding: 15px;
     }
+
     .card-img-wrap {
-      width: 170px; height: 170px; border-radius: 10px; background: #fff; position: relative;
-      overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer;
+      width: 185px;
+      height: 185px;
+      border-radius: 12px;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
-    .card-img-wrap img { width: 84%; height: 84%; object-fit: contain; }
+
+    .card-img-wrap img { width: 86%; height: 86%; object-fit: contain; }
     .locked-blur img { filter: blur(10px) brightness(0.75); }
+
     .watermark-overlay {
-      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: rgba(0, 0, 0, 0.38); color: #fcd34d; font-weight: 800; font-size: 10.5px; text-align: center; pointer-events: none;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5, 7, 11, 0.45);
+      color: #fde047;
+      font-weight: 800;
+      font-size: 10.5px;
+      text-align: center;
+      pointer-events: none;
     }
+
     .infographic-badge {
-      position: absolute; top: 6px; left: 6px; background: linear-gradient(90deg, #dc2626, #ea580c); color: #fff;
-      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+      position: absolute; top: 7px; left: 7px;
+      background: #05070b; color: #fff;
+      font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 5px; text-transform: uppercase;
     }
+
     .brand-wm-badge {
-      position: absolute; bottom: 5px; right: 6px; background: rgba(15, 23, 42, 0.72); color: #f8fafc;
-      font-size: 8.5px; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+      position: absolute; bottom: 6px; right: 7px;
+      background: rgba(5, 7, 11, 0.78); color: #f8fafc;
+      font-size: 8.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
     }
 
-    .card-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 4px; }
-    .card-meta { font-size: 10px; font-weight: 800; color: #38bdf8; text-transform: uppercase; }
-    .brand-pill { background: rgba(168, 85, 247, 0.25); border: 1px solid #a855f7; color: #f3e8ff; padding: 1px 6px; border-radius: 4px; font-size: 9.5px; font-weight: 800; margin-left: 5px; }
-    .card-top-right { display: flex; align-items: center; gap: 7px; }
-    .old-price { color: #94a3b8; font-size: 11px; text-decoration: line-through; }
-    .card-price { color: #34d399; font-size: 13px; font-weight: 800; }
-    .btn-delete-card { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; width: 22px; height: 22px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .card-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+    .card-meta { font-size: 10.5px; font-weight: 800; color: var(--sapphire); text-transform: uppercase; letter-spacing: 0.4px; }
+    .brand-pill { background: rgba(125, 211, 252, 0.14); border: 1px solid rgba(125, 211, 252, 0.35); color: var(--sapphire-bright); padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 700; margin-left: 6px; }
+    .card-top-right { display: flex; align-items: center; gap: 8px; }
+    .old-price { color: var(--text-muted); font-size: 11px; text-decoration: line-through; }
+    .card-price { color: var(--emerald); font-size: 14px; font-weight: 800; }
+    .btn-delete-card { background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3); color: #fca5a5; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 800; }
 
-    .field-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
-    .btn-copy-mini { background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.14); color: #cbd5e1; border-radius: 5px; padding: 2px 5px; font-size: 9.5px; cursor: pointer; }
-    .card-title { font-size: 14.5px; font-weight: 800; color: #fff; flex: 1; }
-    .card-title-sub { font-size: 10.5px; color: #94a3b8; font-style: italic; flex: 1; }
-    .card-desc { font-size: 11.8px; color: #cbd5e1; line-height: 1.44; margin: 3px 0; flex: 1; }
-    .card-specs, .card-keys { font-size: 11px; color: #94a3b8; line-height: 1.38; flex: 1; }
+    .field-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+    .btn-copy-mini { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-titanium); color: var(--text-muted); border-radius: 6px; padding: 3px 6px; font-size: 10px; cursor: pointer; flex-shrink: 0; }
+    .btn-copy-mini:hover { color: #fff; border-color: var(--sapphire); }
+    .card-title { font-size: 15px; font-weight: 800; color: #fff; flex: 1; line-height: 1.3; }
+    .card-title-sub { font-size: 11px; color: var(--text-muted); font-style: italic; flex: 1; }
+    .card-desc { font-size: 12px; color: #cbd5e1; line-height: 1.5; margin: 4px 0; flex: 1; }
+    .card-specs, .card-keys { font-size: 11.2px; color: var(--text-muted); line-height: 1.42; flex: 1; }
     .card-specs strong, .card-keys strong { color: #e2e8f0; }
 
-    .card-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
-    .btn-card { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.16); color: #e2e8f0; padding: 5px 9px; border-radius: 6px; font-size: 10.5px; font-weight: 600; cursor: pointer; }
+    .card-btns { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+    .btn-card { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-titanium); color: #e2e8f0; padding: 6px 10px; border-radius: 8px; font-size: 10.5px; font-weight: 600; cursor: pointer; }
+    .btn-card:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
 
-    .empty-state { text-align: center; padding: 45px 18px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+    .empty-state { text-align: center; padding: 55px 20px; color: var(--text-muted); font-size: 13px; line-height: 1.65; }
 
     /* МОДАЛЬНЕ ВІКНО: STUDIO CONTROL HUB */
     .modal {
-      display: none; position: fixed; inset: 0; z-index: 999;
-      background: rgba(5, 8, 18, 0.88); backdrop-filter: blur(12px);
-      align-items: center; justify-content: center; padding: 16px;
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(5, 7, 11, 0.88);
+      backdrop-filter: blur(14px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
-    .hub-window { width: 100%; max-width: 1320px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 18px; }
-    .hub-body { display: grid; grid-template-columns: 280px 1fr; gap: 16px; flex: 1; overflow: hidden; margin-top: 8px; }
-    .hub-sidebar { background: rgba(8, 12, 24, 0.6); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; }
-    .hub-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 9px; background: rgba(255,255,255,0.04); border: 1px solid transparent; cursor: pointer; }
-    .hub-item.active { background: rgba(168, 85, 247, 0.25); border-color: var(--neon-purple); }
-    .hub-item img { width: 38px; height: 38px; border-radius: 6px; background: #fff; object-fit: contain; }
-    .hub-item-info { overflow: hidden; flex: 1; }
-    .hub-item-sku { font-size: 10px; font-weight: 800; color: #38bdf8; }
-    .hub-item-title { font-size: 11px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .hub-item-price { font-size: 10.5px; color: #34d399; font-weight: 700; }
 
-    .hub-editor { background: rgba(8, 12, 24, 0.55); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 16px; overflow-y: auto; display: grid; grid-template-columns: 240px 1fr; gap: 18px; }
-    .hub-photo-col { display: flex; flex-direction: column; gap: 8px; }
-    .hub-preview-box { width: 240px; height: 240px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid rgba(168, 85, 247, 0.45); }
+    .hub-window { width: 100%; max-width: 1320px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 20px; }
+    .hub-body { display: grid; grid-template-columns: 270px 1fr; gap: 16px; flex: 1; overflow: hidden; margin-top: 10px; }
+    .hub-sidebar { background: var(--bg-input); border: 1px solid var(--border-titanium); border-radius: 14px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; }
+    .hub-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; cursor: pointer; }
+    .hub-item.active { background: rgba(125, 211, 252, 0.14); border-color: rgba(125, 211, 252, 0.45); }
+    .hub-item img { width: 40px; height: 40px; border-radius: 7px; background: #fff; object-fit: contain; flex-shrink: 0; }
+    .hub-item-info { overflow: hidden; flex: 1; }
+    .hub-item-sku { font-size: 10px; font-weight: 800; color: var(--sapphire); }
+    .hub-item-title { font-size: 11px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hub-item-price { font-size: 10.5px; color: var(--emerald); font-weight: 700; }
+
+    .hub-editor { background: var(--bg-input); border: 1px solid var(--border-titanium); border-radius: 14px; padding: 16px; overflow-y: auto; display: grid; grid-template-columns: 240px 1fr; gap: 18px; }
+    .hub-photo-col { display: flex; flex-direction: column; gap: 10px; }
+    .hub-preview-box { width: 240px; height: 240px; background: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border-highlight); }
     .hub-preview-box img { width: 86%; height: 86%; object-fit: contain; }
 
-    .ai-rework-box { background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(168, 85, 247, 0.45); border-radius: 10px; padding: 10px; }
-    .ai-rework-title { font-size: 11px; font-weight: 800; color: #e879f9; text-transform: uppercase; margin-bottom: 5px; }
-    .rework-btns { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
-    .btn-rework-seo { flex: 1; background: linear-gradient(90deg, #7c3aed, #a855f7); border: none; color: #fff; padding: 8px 10px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; }
-    .btn-rework-full { flex: 1; background: rgba(6, 182, 212, 0.25); border: 1px solid #06b6d4; color: #a5f3fc; padding: 8px 10px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .ai-rework-box { background: rgba(125, 211, 252, 0.06); border: 1px solid rgba(125, 211, 252, 0.28); border-radius: 12px; padding: 11px; }
+    .ai-rework-title { font-size: 10.5px; font-weight: 800; color: var(--sapphire-bright); text-transform: uppercase; margin-bottom: 6px; }
+    .rework-btns { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .btn-rework-seo { flex: 1; background: linear-gradient(135deg, #e0f2fe, #7dd3fc); border: none; color: #05070b; padding: 8px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .btn-rework-full { flex: 1; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-highlight); color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
-    .hub-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.12); }
+    .hub-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 10px; border-top: 1px solid var(--border-titanium); gap: 10px; flex-wrap: wrap; }
 
     .toast {
-      position: fixed; bottom: 20px; right: 20px; z-index: 2000;
-      background: rgba(12, 18, 34, 0.95); border: 1px solid var(--neon-green);
-      color: #fff; padding: 9px 15px; border-radius: 9px; font-size: 11.5px; font-weight: 700; display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 2000;
+      background: rgba(13, 17, 26, 0.96);
+      border: 1px solid var(--sapphire);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    /* ПОВНА МОБІЛЬНА АДАПТАЦІЯ (PIXEL / СМАРТФОНИ ТА ПЛАНШЕТИ) */
+    @media (max-width: 1100px) {
+      header { flex-wrap: wrap; justify-content: space-between; }
+      .tier-switcher { order: 3; width: 100%; justify-content: center; overflow-x: auto; }
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 10px; }
+      .panel { padding: 14px; }
+      .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+      .tier-btn { padding: 6px 10px; font-size: 10.5px; }
+      .mini-grid { grid-template-columns: 1fr; }
+      .product-card { grid-template-columns: 1fr; }
+      .card-img-wrap { width: 100%; height: 230px; }
+      .hub-body { grid-template-columns: 1fr; overflow-y: auto; }
+      .hub-sidebar { max-height: 140px; }
+      .hub-editor { grid-template-columns: 1fr; }
+      .hub-preview-box { width: 100%; height: 220px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="whatsapp-pattern"></div>
+  <div class="ambient-grid"></div>
 
   <div class="app-wrapper">
-    <!-- Компактна шапка в 1 рядок з прямою кнопкою Studio Control Hub -->
+    <!-- ШАПКА У СТИЛІ OBSIDIAN GLASS -->
     <header class="crystal-glass">
       <div class="brand">
-        <div class="logo-box">AR</div>
+        <img src="logo.png.jpg" alt="AR" class="logo-img">
         <div class="brand-title">
-          <h1>AutoRank Studio <span class="pro-badge">v8.1 PRO</span></h1>
+          <h1>AutoRank Studio <span class="live-badge"><span class="live-dot"></span>LIVE</span></h1>
           <p>E-COMMERCE AI & SEO CONVEYOR</p>
         </div>
       </div>
@@ -334,11 +789,11 @@
       <div class="tier-switcher">
         <button class="tier-btn" id="tierLiteBtn" onclick="setTier('LITE')">⚡ LITE ($0.25 / 10 грн)</button>
         <button class="tier-btn active-pro" id="tierProBtn" onclick="setTier('PRO')">🚀 PRO ($0.60 / 25 грн)</button>
-        <button class="tier-btn" id="tierVipBtn" onclick="setTier('VIP')">👑 VIP STUDIO ($1.20 / 50 грн)</button>
+        <button class="tier-btn" id="tierVipBtn" onclick="setTier('VIP')">👑 VIP ($1.20 / 50 грн)</button>
       </div>
 
       <div class="header-right">
-        <button class="btn-hub-header" onclick="openControlHub(0)">🎛️ Studio Control Hub</button>
+        <button class="btn-hub-header" onclick="openControlHub(0)">🎛️ Control Hub</button>
 
         <div class="ui-lang-switch">
           <button class="ui-lang-btn active" id="uiLangUA" onclick="setUiLang('UA')">UA</button>
@@ -355,11 +810,11 @@
     </header>
 
     <div class="workspace">
-      <!-- ШИРОКЕ ЛІВЕ ВІКНО (44% екрана) -->
+      <!-- ЛІВА ПАНЕЛЬ (PHOTO UPLOAD ZONE) -->
       <section class="panel crystal-glass">
         <div class="panel-header">
           <span id="uiLeftHeader">📂 ВХІДНІ ФОТО ТА ПАРАМЕТРИ ПАРТІЇ</span>
-          <span id="tierStatusLabel" style="font-size:10.5px; color:#e879f9;">🚀 PRO ($0.60 / 25 грн)</span>
+          <span id="tierStatusLabel" style="font-size:10.5px; color:#7dd3fc;">🚀 PRO ($0.60 / 25 грн)</span>
         </div>
 
         <div class="lite-banner" id="liteBanner">
@@ -410,7 +865,7 @@
           </div>
         </div>
 
-        <div id="vipSettingsBlock" style="display:none; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(245,158,11,0.35);">
+        <div id="vipSettingsBlock" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed rgba(251,191,36,0.3);">
           <div style="font-size:10.5px; font-weight:800; color:#fde047;">👑 VIP STUDIO НАЛАШТУВАННЯ:</div>
           <div class="mini-grid">
             <div>
@@ -470,7 +925,7 @@
         <div class="drop-zone" id="dropZone">
           <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
           <button class="btn-select" id="uiSelectPhotosBtn" onclick="document.getElementById('fileInput').click()">
-            + Додати фото в чергу (Поштучно або Пачкою)
+            ☁️ + Додати фото в чергу (Поштучно або Пачкою)
           </button>
           <div class="drop-hint">Під фото в черзі можна вписати бренд/тканину (напр. <b>Hellstar, фліс</b>) або додати ціну в назву файлу (<b>hudi_1850uah.jpg</b>)</div>
         </div>
@@ -489,13 +944,13 @@
         </div>
       </section>
 
-      <!-- ПРАВЕ ВІКНО (56% екрана): Завжди на видноті! -->
+      <!-- ПРАВА ПАНЕЛЬ (CATALOG WORKSPACE) -->
       <section class="panel crystal-glass">
         <div class="panel-header">
           <span id="uiRightHeader">✨ ГОТОВИЙ КАТАЛОГ ТОВАРІВ</span>
           <div class="right-header-actions">
             <span id="processedCounter" style="font-size:11px; color:#94a3b8;">Карток: 0 шт.</span>
-            <button class="btn-top-tool hub-accent" onclick="openControlHub(0)">🎛️ Studio Control Hub (Ревізія та Ціни)</button>
+            <button class="btn-top-tool hub-accent" onclick="openControlHub(0)">🎛️ Studio Control Hub</button>
             <button class="btn-top-tool" onclick="printWarehouseLabels()">🏷️ Етикетки</button>
             <button class="btn-top-tool" onclick="clearOutputWindow()">🧹 Очистити</button>
           </div>
@@ -528,9 +983,9 @@
 
         <div class="cards-container" id="cardsContainer">
           <div class="empty-state">
-            Завантажте фото ліворуч та натисніть зелену кнопку запуску 🤪🚀<br>
+            Завантажте фото ліворуч та натисніть кнопку запуску 🚀<br>
             <span style="font-size:11.5px; color:#94a3b8;">Бажаєте подивитися, як виглядає кабінет доопрацювання та повторної обробки прямо зараз?</span><br>
-            <button class="btn-control-hub" style="margin-top:12px;" onclick="loadDemoAndOpenHub()">🎛️ Відкрити Studio Control Hub (Подивитися демо-картку)</button>
+            <button class="btn-control-hub" style="margin-top:14px;" onclick="loadDemoAndOpenHub()">🎛️ Відкрити Studio Control Hub (Демо-картка)</button>
           </div>
         </div>
       </section>
@@ -543,7 +998,7 @@
       <div class="panel-header" style="margin-bottom:0;">
         <span>🎛️ STUDIO CONTROL HUB — КАБІНЕТ РЕВІЗІЇ, ЦІН ТА ПОВТОРНОЇ AI-ОБРОБКИ</span>
         <div style="display:flex; gap:10px; align-items:center;">
-          <span id="hubItemCounter" style="font-size:11.5px; color:#38bdf8;">Товар 1 з 1</span>
+          <span id="hubItemCounter" style="font-size:11.5px; color:#7dd3fc;">Товар 1 з 1</span>
           <button class="btn-delete-card" onclick="closeControlHub()">✕</button>
         </div>
       </div>
@@ -565,7 +1020,7 @@
               <div class="ai-rework-title">🤖 Завдання для AI на доопрацювання (n8n):</div>
               <textarea id="hubCorrectionNote" class="glass-input" rows="3" placeholder="Напишіть зауваження (напр.: Це фірмове худі бренду Hellstar, видно на бірці! Додай бренд у заголовок і характеристики)"></textarea>
               <div class="rework-btns">
-                <button class="btn-rework-seo" id="btnReworkSeo" onclick="runHubRework('seo_only')">📝 Переписати тільки SEO (3 сек)</button>
+                <button class="btn-rework-seo" id="btnReworkSeo" onclick="runHubRework('seo_only')">📝 Переписати тільки SEO</button>
                 <button class="btn-rework-full" id="btnReworkFull" onclick="runHubRework('full')">🖼️ Переробити Фото + SEO</button>
               </div>
             </div>
@@ -613,17 +1068,17 @@
       </div>
 
       <div class="hub-footer">
-        <div style="font-size:11.5px; color:#94a3b8;">💡 Працюйте один за трьох: редагуйте вручну з клавіатури або відправляйте точкове завдання для AI ліворуч.</div>
-        <div style="display:flex; gap:10px;">
+        <div style="font-size:11.5px; color:#94a3b8;">💡 Редагуйте вручну з клавіатури або відправляйте точкове завдання для AI ліворуч.</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn-csv" onclick="downloadCSV()">📊 Скачати таблицю (.CSV)</button>
-          <button class="btn-run" style="padding:9px 22px; width:auto;" onclick="closeControlHub()">✅ Затвердити всі та повернутися в каталог</button>
+          <button class="btn-run" style="padding:9px 22px; width:auto;" onclick="closeControlHub()">✅ Затвердити та повернутися</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="modal" id="imgModal" onclick="this.style.display='none'">
-    <img id="modalImg" src="" alt="Preview" style="max-width:90%; max-height:88vh; border-radius:14px; background:#fff;">
+    <img id="modalImg" src="" alt="Preview" style="max-width:92%; max-height:88vh; border-radius:14px; background:#fff;">
   </div>
 
   <div class="toast" id="toastBox">✅ Виконано!</div>
@@ -675,7 +1130,7 @@
       ['UA', 'EN', 'RU'].forEach(l => document.getElementById('uiLang' + l).classList.toggle('active', l === lang));
       const map = {
         UA: ['📂 ВХІДНІ ФОТО ТА ПАРАМЕТРИ ПАРТІЇ', '✨ ГОТОВИЙ КАТАЛОГ ТОВАРІВ', '🚀 Запустити конвеєр'],
-        EN: ['📂 RAW PHOTOS & BATCH SETTINGS', '✨ PROCESSED PRODUCT CATALOG', '🚀 Run AI Conveyor'],
+        EN: ['📂 PHOTO UPLOAD ZONE', '✨ CATALOG WORKSPACE', '🚀 Start AI Engine'],
         RU: ['📂 ВХОДНЫЕ ФОТО И ПАРАМЕТРЫ ПАРТИИ', '✨ ГОТОВЫЙ КАТАЛОГ ТОВАРОВ', '🚀 Запустить конвейер']
       };
       document.getElementById('uiLeftHeader').innerText = map[lang][0];
@@ -697,14 +1152,14 @@
 
       if (tier === 'LITE') {
         label.innerText = '⚡ LITE ($0.25 / 10 грн)';
-        label.style.color = '#22d3ee';
+        label.style.color = '#7dd3fc';
         liteBanner.style.display = 'block';
         proBlock.style.display = 'none';
         vipBlock.style.display = 'none';
         syncTag.innerText = '+15 грн ➔ Разом 25 грн';
       } else if (tier === 'PRO') {
         label.innerText = '🚀 PRO ($0.60 / 25 грн)';
-        label.style.color = '#e879f9';
+        label.style.color = '#bae6fd';
         liteBanner.style.display = 'none';
         proBlock.style.display = 'block';
         vipBlock.style.display = 'none';
@@ -984,9 +1439,9 @@
         document.getElementById('processedCounter').innerText = 'Карток: 0 шт.';
         container.innerHTML = `
           <div class="empty-state">
-            Завантажте фото ліворуч та натисніть зелену кнопку запуску 🤪🚀<br>
+            Завантажте фото ліворуч та натисніть кнопку запуску 🚀<br>
             <span style="font-size:11.5px; color:#94a3b8;">Бажаєте протестувати кабінет доопрацювання <b>🎛️ Studio Control Hub</b> прямо зараз?</span><br>
-            <button class="btn-control-hub" style="margin-top:12px;" onclick="loadDemoAndOpenHub()">🎛️ Відкрити Studio Control Hub (Демо-картка)</button>
+            <button class="btn-control-hub" style="margin-top:14px;" onclick="loadDemoAndOpenHub()">🎛️ Відкрити Studio Control Hub (Демо-картка)</button>
           </div>`;
         return;
       }
@@ -1044,7 +1499,7 @@
               <button class="btn-copy-mini" onclick="copyFieldText(processedItems[${idx}].keywords)">📋</button>
             </div>
             <div class="card-btns">
-              <button class="btn-card" onclick="openControlHub(${idx})" style="border-color:#a855f7; color:#f3e8ff;">🎛️ Доопрацювати в Studio Control Hub</button>
+              <button class="btn-card" onclick="openControlHub(${idx})" style="border-color:rgba(125,211,252,0.45); color:#bae6fd;">🎛️ Доопрацювати в Hub</button>
               <button class="btn-card" onclick="downloadPNG(${idx})">🖼️ Фото (.PNG)</button>
               <button class="btn-card" onclick="downloadTXT(${idx})">📄 Паспорт (.TXT)</button>
               <button class="btn-card" onclick="copyInstagramPost(${idx})">📱 Пост для Instagram</button>
@@ -1055,7 +1510,6 @@
       });
     }
 
-    // Якщо карток ще немає, створює демо-картку худі Hellstar, щоб одразу показати Studio Control Hub
     function loadDemoAndOpenHub() {
       if (processedItems.length === 0) {
         processedItems.push({
@@ -1263,7 +1717,7 @@
     }
 
     function buildTxtContent(item) {
-      return `=== AUTORANK STUDIO V8.1 ===\r\nSKU: ${item.sku}\r\nБренд: ${item.brand || '-'}\r\nНазва (UA): ${item.title_ua}\r\nНазва (Інші): ${item.title_en}\r\nЦіна: ${item.price}\r\n\r\nОпис:\r\n${item.description}\r\n\r\nХарактеристики: ${item.characteristics}\r\nКлючі: ${item.keywords}`;
+      return `=== AUTORANK STUDIO ===\r\nSKU: ${item.sku}\r\nБренд: ${item.brand || '-'}\r\nНазва (UA): ${item.title_ua}\r\nНазва (Інші): ${item.title_en}\r\nЦіна: ${item.price}\r\n\r\nОпис:\r\n${item.description}\r\n\r\nХарактеристики: ${item.characteristics}\r\nКлючі: ${item.keywords}`;
     }
 
     function downloadTXT(idx) {
@@ -1293,7 +1747,7 @@
     function downloadCSV() {
       const blob = new Blob([buildCsvString()], { type: 'text/csv;charset=utf-8' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = `AutoRank_Export_v8.csv`;
+      a.href = URL.createObjectURL(blob); a.download = `AutoRank_Export.csv`;
       a.click();
     }
 
@@ -1310,7 +1764,7 @@
       if (!window.JSZip) return;
       showToast('📦 Формуємо ZIP-архів...');
       const zip = new JSZip();
-      zip.file('AutoRank_Export_v8.csv', buildCsvString());
+      zip.file('AutoRank_Export.csv', buildCsvString());
       for (let i = 0; i < processedItems.length; i++) {
         const item = processedItems[i];
         zip.file(`Cards_TXT/${item.sku}.txt`, '\uFEFF' + buildTxtContent(item));
